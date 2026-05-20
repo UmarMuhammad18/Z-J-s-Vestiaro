@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Z&J's Vestiario — If it exists, we've got it</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link active">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero">
+  <p class="hero-eye">Welcome to Z&J's Vestiario</p>
+  <h1 class="hero-title">No limits<span style="display: block;"><em>just possibilities</em></span></h1>
+  <p class="hero-vs">━━ IF IT EXISTS, WE'VE GOT IT ━━</p>
+  <p class="hero-sub">Discover a curated collection of fashion, footwear, and gadgets. Premium quality. Unbeatable prices. Same-day delivery available.</p>
+  <p class="hero-tag">SHOP NOW · FAST DELIVERY · 100% GUARANTEED</p>
+  <div class="hero-ctas">
+    <button class="btn-gold" onclick="window.location.href='shop.html'">Explore Collection</button>
+    <button class="btn-outline" onclick="window.location.href='about.html'">Learn More</button>
+  </div>
+</div>
+
+<!-- Category Section -->
+<div class="section" style="padding: 5rem 2.5rem;">
+  <p class="lbl">Shop by Category</p>
+  <h2 class="ttl">Discover What <em>You Love</em></h2>
+  
+  <div class="cat-grid">
+    <div class="cat-card" onclick="window.location.href='shop.html?cat=footwear'">
+      <div class="cat-icon">👟</div>
+      <div class="cat-ov">
+        <div class="cat-name">Footwear</div>
+        <div class="cat-desc">Premium Shoes</div>
+      </div>
+    </div>
+    
+    <div class="cat-card" onclick="window.location.href='shop.html?cat=gadgets'">
+      <div class="cat-icon">📱</div>
+      <div class="cat-ov">
+        <div class="cat-name">Gadgets</div>
+        <div class="cat-desc">Latest Tech</div>
+      </div>
+    </div>
+    
+    <div class="cat-card" onclick="window.location.href='shop.html?cat=clothing'">
+      <div class="cat-icon">👗</div>
+      <div class="cat-ov">
+        <div class="cat-name">Clothing</div>
+        <div class="cat-desc">Fashion Forward</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">✨ Premium Quality</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">🚚 Fast Shipping</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">💚 Customer First</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">🛡️ Secure Checkout</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">✨ Premium Quality</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">🚚 Fast Shipping</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">💚 Customer First</div>
+    <div class="marquee-dot">•</div>
+    <div class="marquee-item">🛡️ Secure Checkout</div>
+  </div>
+</div>
+
+<!-- Promise Section -->
+<div class="promise-strip">
+  <div class="promise-quote">"We believe shopping should be effortless, enjoyable, and always extraordinary."</div>
+  <div class="promise-badges">
+    <div class="promise-badge">
+      <div class="promise-icon">✨</div>
+      <div class="promise-label">Quality First</div>
+    </div>
+    <div class="promise-badge">
+      <div class="promise-icon">🚚</div>
+      <div class="promise-label">Fast Delivery</div>
+    </div>
+    <div class="promise-badge">
+      <div class="promise-icon">💯</div>
+      <div class="promise-label">Guaranteed</div>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Section -->
+<div class="section">
+  <p class="lbl">This Week's Featured</p>
+  <h2 class="ttl">New <em>Arrivals</em></h2>
+  
+  <div class="products-grid" id="featured-products" style="margin-top: 2rem;">
+    <!-- Featured products loaded via JS -->
+  </div>
+  
+  <div style="text-align: center; margin-top: 3rem;">
+    <button class="btn-outline" onclick="window.location.href='shop.html'">View All Products</button>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+// Load featured products on homepage
+document.addEventListener('DOMContentLoaded', () => {
+  const sampleProducts = [
+    { id: 1, name: 'Premium Sneakers', category: 'footwear', price: 89.99, emoji: '👟' },
+    { id: 2, name: 'Leather Boots', category: 'footwear', price: 129.99, emoji: '🥾' },
+    { id: 4, name: 'Wireless Earbuds', category: 'gadgets', price: 79.99, emoji: '🎧' },
+  ];
+  
+  const container = document.getElementById('featured-products');
+  container.innerHTML = sampleProducts.map(p => `
+    <div class="prod-card">
+      <div class="prod-img-wrap">
+        <span class="prod-emoji">${p.emoji}</span>
+      </div>
+      <div class="prod-info">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-meta">${p.category}</div>
+        <div class="prod-price">$${p.price.toFixed(2)}</div>
+      </div>
+    </div>
+  `).join('');
+});
+</script>
+</body>
+</html>

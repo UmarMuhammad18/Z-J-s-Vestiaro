@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<!-- Checkout Container -->
+<div class="cart-container">
+  <h1 class="ttl" style="margin-top: 2rem;">Checkout</h1>
+  
+  <div class="cart-grid" style="grid-template-columns: 1fr 1fr;">
+    <!-- Shipping Info -->
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem;">
+      <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 1rem;">Shipping Information</h3>
+      
+      <form id="checkoutForm" onsubmit="processOrder(event)">
+        <div class="fgrp">
+          <label>Full Name</label>
+          <input type="text" required placeholder="John Doe" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+        </div>
+        
+        <div class="fgrp">
+          <label>Email Address</label>
+          <input type="email" required placeholder="john@example.com" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+        </div>
+        
+        <div class="fgrp">
+          <label>Phone Number</label>
+          <input type="tel" required placeholder="+234..." style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+        </div>
+        
+        <div class="fgrp">
+          <label>Street Address</label>
+          <input type="text" required placeholder="123 Main Street" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="fgrp">
+            <label>City</label>
+            <input type="text" required placeholder="Kano" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+          </div>
+          
+          <div class="fgrp">
+            <label>State</label>
+            <input type="text" required placeholder="Kano" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+          </div>
+        </div>
+        
+        <div class="fgrp">
+          <label>Postal Code</label>
+          <input type="text" required placeholder="00001" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+          <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 1rem;">Payment Method</h3>
+          
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 1rem;">
+            <input type="radio" name="payment" value="whatsapp" checked style="cursor: pointer;">
+            <span style="font-size: 0.95rem;">WhatsApp Order (Pay on WhatsApp)</span>
+          </label>
+          
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="payment" value="card" style="cursor: pointer;">
+            <span style="font-size: 0.95rem;">Credit/Debit Card</span>
+          </label>
+        </div>
+        
+        <button type="submit" class="btn-gold" style="width: 100%; margin-top: 2rem;">Place Order</button>
+      </form>
+    </div>
+    
+    <!-- Order Summary -->
+    <div class="cart-summary" style="position: static;">
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1rem;">Order Summary</h3>
+      
+      <div id="order-items" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+        <!-- Items loaded here -->
+      </div>
+      
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="subtotal">$0.00</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span id="shipping">Free</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Tax (5%)</span>
+        <span id="tax">$0.00</span>
+      </div>
+      
+      <div class="summary-total">
+        <span>Total: </span>
+        <span id="total">$0.00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function loadOrderSummary() {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const container = document.getElementById('order-items');
+  
+  container.innerHTML = cart.map(item => `
+    <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+      <span>${item.emoji} ${item.name}</span>
+      <span>$${(item.price * item.quantity).toFixed(2)}</span>
+    </div>
+  `).join('');
+  
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const tax = subtotal * 0.05;
+  const total = subtotal + tax;
+  
+  document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+  document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+}
+
+function processOrder(e) {
+  e.preventDefault();
+  const form = e.target;
+  const paymentMethod = form.querySelector('input[name="payment"]:checked').value;
+  const name = form.querySelector('input[type="text"]').value;
+  
+  if (paymentMethod === 'whatsapp') {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const message = `Hi! I'd like to place an order.\n\nCustomer: ${name}\n\nItems:\n${cart.map(item => `${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}\n\nTotal: ${document.getElementById('total').textContent}`;
+    const whatsappLink = `https://wa.me/+2348168231546?text=${encodeURIComponent(message)}`;
+    window.open(whatsappLink, '_blank');
+  } else {
+    alert('Card payment integration coming soon!');
+  }
+  
+  localStorage.removeItem('cart');
+  setTimeout(() => window.location.href = 'index.html', 1000);
+}
+
+document.addEventListener('DOMContentLoaded', loadOrderSummary);
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link active">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<!-- About Hero -->
+<div class="about-hero">
+  <div>
+    <p class="lbl">Our Story</p>
+    <h1 class="about-title">Built on the belief that <em>everything</em> should be within reach.</h1>
+    <p class="about-body">Z&J's Vestiario was founded with one bold vision: no limits, just possibilities. We curate the finest in fashion, footwear, and gadgets — bringing them together under one roof so you never have to look elsewhere.</p>
+    <p class="about-body" style="margin-top:1rem">Whether you're refreshing your wardrobe, upgrading your tech, or finding that perfect pair of shoes, Z&J's is your ultimate destination.</p>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+  <div><div class="stat-num">500+</div><div class="stat-lbl">Products Available</div></div>
+  <div><div class="stat-num">3</div><div class="stat-lbl">Core Categories</div></div>
+  <div><div class="stat-num">100%</div><div class="stat-lbl">Satisfaction Guaranteed</div></div>
+</div>
+
+<!-- Our Promise -->
+<div style="background:#0d0d0d;border-top:1px solid var(--border);padding:5rem 2.5rem;text-align:center">
+  <p class="lbl">Our Promise</p>
+  <h2 class="ttl">"If it exists, <em>we've got it"</em></h2>
+  <p style="font-size:1rem;color:var(--muted);line-height:1.85;max-width:580px;margin:0 auto 2rem">From stylish clothes to reliable gadgets and everything in between, Z&J's Vestiario is committed to quality, variety, and an unparalleled shopping experience.</p>
+  <button class="btn-gold" onclick="window.location.href='shop.html'">Explore the Collection</button>
+</div>
+
+<!-- Mission Section -->
+<div class="section">
+  <p class="lbl">Our Mission</p>
+  <h2 class="ttl"><em>Making</em> Shopping Simple</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎯</div>
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.8rem;">Curated Selection</h3>
+      <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.6;">We handpick every product to ensure quality and variety meet your expectations.</p>
+    </div>
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">🚚</div>
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.8rem;">Fast Delivery</h3>
+      <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.6;">Quick processing and reliable shipping to get your purchases to you on time.</p>
+    </div>
+    <div style="background: var(--surface); border: 1px solid var(--border); padding: 2rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">💯</div>
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.8rem;">Quality Promise</h3>
+      <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.6;">Every item meets our strict quality standards. Satisfaction guaranteed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

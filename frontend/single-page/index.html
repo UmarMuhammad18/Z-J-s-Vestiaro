@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Z&amp;J's Vestiario — If it exists, we've got it</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold:    #c9a84c;
+  --black:   #0a0a0a;
+  --surface: #111111;
+  --white:   #f5f3f0;
+  --muted:   rgba(245,243,240,0.55);
+  --grey:    #888888;
+  --border:  rgba(255,255,255,0.07);
+  --tr:      0.35s cubic-bezier(0.23,1,0.32,1);
+}
+html { scroll-behavior: smooth; }
+body { font-family:'Cormorant Garamond',Georgia,serif; background:var(--black); color:var(--white); overflow-x:hidden; line-height:1.6; }
+img { display:block; max-width:100%; }
+a { text-decoration:none; color:inherit; }
+button { font-family:inherit; cursor:pointer; }
+select, input, textarea { font-family:inherit; }
+
+/* ── PAGE ROUTING ── */
+.page { display:none; }
+.page.active { display:block; }
+#page-dashboard { display:none; }
+#page-dashboard.active { display:flex; min-height:100vh; }
+
+/* ── NAV ── */
+#main-nav {
+  position:sticky; top:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1rem 2.5rem;
+  background:rgba(10,10,10,0.97);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo { font-family:'Playfair Display',serif; font-size:1.25rem; letter-spacing:0.06em; cursor:pointer; }
+.nav-logo .amp { color:var(--gold); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links li a { font-family:'Josefin Sans',sans-serif; font-size:0.62rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--muted); cursor:pointer; transition:color var(--tr); }
+.nav-links li a:hover,.nav-links li a.active { color:var(--gold); }
+.btn-nav { font-family:'Josefin Sans',sans-serif; font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; border:1px solid rgba(201,168,76,0.45); color:var(--gold); padding:0.45rem 1.1rem; background:transparent; transition:all var(--tr); }
+.btn-nav:hover { background:var(--gold); color:var(--black); }
+
+/* ── BUTTONS ── */
+.btn-gold { font-family:'Josefin Sans',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; background:var(--gold); color:var(--black); padding:0.85rem 2.2rem; border:none; display:inline-block; transition:all var(--tr); }
+.btn-gold:hover { background:var(--white); transform:translateY(-2px); }
+.btn-outline { font-family:'Josefin Sans',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; background:transparent; color:var(--white); padding:0.85rem 2.2rem; border:1px solid rgba(245,243,240,0.28); display:inline-block; transition:all var(--tr); }
+.btn-outline:hover { border-color:var(--white); transform:translateY(-2px); }
+.btn-wa { display:flex; align-items:center; justify-content:center; gap:0.7rem; font-family:'Josefin Sans',sans-serif; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; background:#25D366; color:#fff; padding:0.95rem 1.5rem; border:none; width:100%; transition:all var(--tr); cursor:pointer; }
+.btn-wa:hover { background:#20bd5a; transform:translateY(-1px); }
+.btn-sm { font-family:'Josefin Sans',sans-serif; font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.3rem 0.65rem; border:none; cursor:pointer; transition:all var(--tr); }
+.btn-danger { background:rgba(220,50,50,0.15); color:#e05555; }
+.btn-accent { background:rgba(201,168,76,0.14); color:var(--gold); }
+
+/* ── FORM ELEMENTS ── */
+.fgrp { margin-bottom:1.1rem; }
+.fgrp label { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--grey); display:block; margin-bottom:0.4rem; }
+.fgrp input,.fgrp textarea,.fgrp select { width:100%; padding:0.75rem 0.9rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); color:var(--white); font-size:0.95rem; outline:none; transition:border-color var(--tr); resize:vertical; }
+.fgrp input:focus,.fgrp textarea:focus,.fgrp select:focus { border-color:var(--gold); }
+.fgrp select option { background:#1a1a1a; }
+.fgrp textarea { min-height:110px; }
+
+/* ── HELPERS ── */
+.section { padding:6rem 2.5rem; max-width:1300px; margin:0 auto; }
+.lbl { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.38em; text-transform:uppercase; color:var(--gold); margin-bottom:0.8rem; }
+.ttl { font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; margin-bottom:2.5rem; }
+.ttl em { font-style:italic; color:var(--gold); }
+
+/* ── MARQUEE ── */
+.marquee-wrap { overflow:hidden; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:0.85rem 0; background:rgba(201,168,76,0.025); }
+.marquee-track { display:flex; gap:3.5rem; white-space:nowrap; animation:marquee 22s linear infinite; }
+.marquee-item { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--grey); flex-shrink:0; }
+.marquee-dot { color:var(--gold); margin:0 0.8rem; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ── HERO ── */
+.hero { min-height:calc(100vh - 62px); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:4rem 2rem; background:radial-gradient(ellipse 70% 60% at 20% 70%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 80% 20%,rgba(201,168,76,0.045) 0%,transparent 55%); }
+.hero-eye { font-family:'Josefin Sans',sans-serif; font-size:0.6rem; letter-spacing:0.4em; text-transform:uppercase; color:var(--gold); margin-bottom:1.8rem; animation:fadeUp 0.9s ease both 0.1s; }
+.hero-title { font-family:'Playfair Display',serif; font-size:clamp(3.5rem,10vw,8rem); font-weight:900; line-height:0.92; margin-bottom:0.5rem; animation:fadeUp 0.9s ease both 0.25s; }
+.hero-title em { font-style:italic; color:var(--gold); }
+.hero-vs { font-family:'Josefin Sans',sans-serif; font-size:0.62rem; letter-spacing:0.55em; text-transform:uppercase; color:rgba(255,255,255,0.18); margin-bottom:1.5rem; animation:fadeUp 0.9s ease both 0.35s; }
+.hero-sub { font-size:clamp(0.95rem,2vw,1.2rem); color:var(--muted); max-width:480px; line-height:1.75; margin:0 auto 0.8rem; animation:fadeUp 0.9s ease both 0.4s; }
+.hero-tag { font-family:'Josefin Sans',sans-serif; font-size:0.62rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--grey); margin-bottom:2.5rem; animation:fadeUp 0.9s ease both 0.5s; }
+.hero-ctas { display:flex; gap:0.9rem; flex-wrap:wrap; justify-content:center; animation:fadeUp 0.9s ease both 0.6s; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── CATEGORY CARDS ── */
+.cat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:2px; }
+.cat-card { aspect-ratio:3/4; position:relative; overflow:hidden; cursor:pointer; background:var(--surface); border:1px solid var(--border); transition:transform var(--tr); }
+.cat-card:hover { transform:scale(1.015); }
+.cat-card:hover .cat-ov { opacity:1; }
+.cat-card:hover .cat-icon { transform:scale(1.08); }
+.cat-icon { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:5rem; background:linear-gradient(145deg,#111,#1c1c1c); transition:transform var(--tr); }
+.cat-ov { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.15) 55%,transparent 100%); opacity:0.82; transition:opacity var(--tr); display:flex; flex-direction:column; justify-content:flex-end; padding:1.8rem; }
+.cat-name { font-family:'Playfair Display',serif; font-size:1.45rem; font-weight:700; margin-bottom:0.25rem; }
+.cat-desc { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); }
+
+/* ── PROMISE STRIP ── */
+.promise-strip { background:#0d0d0d; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:4rem 2.5rem; text-align:center; }
+.promise-quote { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.8vw,2.2rem); font-weight:400; line-height:1.45; color:rgba(245,243,240,0.82); max-width:720px; margin:0 auto 2.5rem; }
+.promise-badges { display:flex; justify-content:center; gap:3.5rem; flex-wrap:wrap; }
+.promise-badge { text-align:center; }
+.promise-icon { font-size:1.6rem; color:var(--gold); margin-bottom:0.5rem; }
+.promise-label { font-family:'Josefin Sans',sans-serif; font-size:0.54rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--grey); }
+
+/* ── SHOP ── */
+.shop-header { padding:4rem 2.5rem 2rem; border-bottom:1px solid var(--border); }
+.filter-bar { display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:1.5rem; }
+.flt-btn { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; padding:0.42rem 1.1rem; border:1px solid rgba(255,255,255,0.14); background:transparent; color:var(--muted); transition:all var(--tr); }
+.flt-btn.active,.flt-btn:hover { background:var(--gold); color:var(--black); border-color:var(--gold); }
+.products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:2px; padding:2rem 2.5rem 5rem; max-width:1300px; margin:0 auto; }
+.prod-card { background:var(--surface); border:1px solid var(--border); cursor:pointer; overflow:hidden; transition:transform var(--tr); }
+.prod-card:hover { transform:translateY(-4px); }
+.prod-card:hover .prod-emoji { transform:scale(1.06); }
+.prod-img-wrap { aspect-ratio:1; overflow:hidden; background:linear-gradient(145deg,#141414,#1e1e1e); display:flex; align-items:center; justify-content:center; font-size:3.8rem; position:relative; }
+.prod-img-wrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.prod-emoji { transition:transform var(--tr); position:relative; z-index:1; }
+.prod-info { padding:1.1rem; }
+.prod-name { font-family:'Playfair Display',serif; font-size:1rem; margin-bottom:0.25rem; }
+.prod-meta { font-family:'Josefin Sans',sans-serif; font-size:0.54rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--grey); }
+.prod-price { font-size:1.05rem; color:var(--gold); margin-top:0.65rem; }
+.prod-wa-hint { display:flex; align-items:center; gap:4px; margin-top:0.45rem; font-family:'Josefin Sans',sans-serif; font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:#25D366; }
+
+/* ── ABOUT ── */
+.about-hero { min-height:55vh; display:flex; align-items:center; padding:7rem 2.5rem 4rem; background:linear-gradient(135deg,var(--black) 55%,#141414 100%); }
+.about-title { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,4.5vw,4rem); font-weight:400; line-height:1.18; margin-bottom:1.5rem; max-width:620px; }
+.about-title em { font-style:italic; color:var(--gold); }
+.about-body { font-size:1rem; color:var(--muted); line-height:1.85; max-width:500px; }
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; padding:4.5rem 2.5rem; border-top:1px solid var(--border); max-width:820px; margin:0 auto; }
+.stat-num { font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--gold); }
+.stat-lbl { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--grey); margin-top:0.4rem; }
+
+/* ── CONTACT ── */
+.contact-wrap { display:grid; grid-template-columns:1fr 1fr; min-height:calc(100vh - 62px); }
+.contact-left { padding:6rem 3rem; background:#0e0e0e; border-right:1px solid var(--border); }
+.contact-right { padding:6rem 3rem; }
+.contact-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,3.5vw,3.2rem); font-weight:700; line-height:1.1; margin-bottom:1.2rem; }
+.ci-row { margin-bottom:1.6rem; }
+.ci-lbl { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:0.3rem; }
+.ci-val { font-size:0.95rem; color:var(--muted); }
+
+/* ── FOOTER ── */
+.site-footer { background:#080808; border-top:1px solid var(--border); padding:4.5rem 2.5rem 2rem; }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:2.5rem; max-width:1200px; margin:0 auto 3rem; }
+.footer-brand { font-family:'Playfair Display',serif; font-size:1.65rem; margin-bottom:0.7rem; }
+.footer-brand .amp { color:var(--gold); }
+.footer-tagline { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--grey); }
+.footer-blurb { font-size:0.88rem; color:rgba(245,243,240,0.32); line-height:1.7; margin-top:1.2rem; }
+.footer-col-title { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:1.2rem; }
+.footer-link { display:block; font-size:0.88rem; color:rgba(245,243,240,0.42); margin-bottom:0.6rem; cursor:pointer; transition:color var(--tr); }
+.footer-link:hover { color:var(--white); }
+.footer-bottom { text-align:center; padding-top:1.8rem; border-top:1px solid var(--border); font-family:'Josefin Sans',sans-serif; font-size:0.52rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.18); }
+
+/* ── PRODUCT MODAL ── */
+.pm-overlay { display:none; position:fixed; inset:0; z-index:700; background:rgba(0,0,0,0.92); backdrop-filter:blur(14px); align-items:center; justify-content:center; padding:1.5rem; }
+.pm-overlay.open { display:flex; }
+.pm-box { background:#0e0e0e; border:1px solid rgba(255,255,255,0.09); max-width:820px; width:100%; display:grid; grid-template-columns:1fr 1fr; position:relative; max-height:90vh; overflow:hidden; animation:modalIn 0.38s cubic-bezier(0.23,1,0.32,1) both; }
+.pm-image-side { background:linear-gradient(145deg,#141414,#1c1c1c); display:flex; align-items:center; justify-content:center; min-height:400px; position:relative; overflow:hidden; font-size:6.5rem; }
+.pm-image-side img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.pm-info-side { padding:2.2rem 1.9rem; display:flex; flex-direction:column; overflow-y:auto; }
+.pm-close { position:absolute; top:0.9rem; right:0.9rem; z-index:10; background:rgba(10,10,10,0.75); border:1px solid rgba(255,255,255,0.12); color:var(--white); width:34px; height:34px; display:flex; align-items:center; justify-content:center; font-size:1rem; cursor:pointer; transition:background var(--tr); }
+.pm-close:hover { background:rgba(255,255,255,0.1); }
+.pm-cat { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+.pm-name { font-family:'Playfair Display',serif; font-size:1.75rem; font-weight:700; line-height:1.15; margin-bottom:0.4rem; }
+.pm-gender { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:1.4rem; }
+.pm-price { font-family:'Playfair Display',serif; font-size:2.1rem; color:var(--gold); margin-bottom:0.3rem; }
+.pm-stock { font-family:'Josefin Sans',sans-serif; font-size:0.56rem; letter-spacing:0.2em; text-transform:uppercase; color:#4ece7a; margin-bottom:1.6rem; }
+.pm-stock.out { color:#e05555; }
+.pm-divider { border:none; border-top:1px solid var(--border); margin-bottom:1.4rem; }
+.pm-desc { font-size:0.95rem; color:var(--muted); line-height:1.8; margin-bottom:1.6rem; flex:1; }
+.pm-wa-note { font-family:'Josefin Sans',sans-serif; font-size:0.52rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:0.6rem; }
+@keyframes modalIn { from{opacity:0;transform:translateY(18px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+/* ── LOGIN MODAL ── */
+.modal-overlay { display:none; position:fixed; inset:0; z-index:800; background:rgba(0,0,0,0.92); backdrop-filter:blur(14px); align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.login-box { background:#0e0e0e; border:1px solid rgba(255,255,255,0.09); width:420px; padding:2.8rem; position:relative; animation:modalIn 0.38s cubic-bezier(0.23,1,0.32,1) both; }
+.login-close { position:absolute; top:0.9rem; right:1rem; background:none; border:none; color:var(--grey); font-size:1.4rem; cursor:pointer; transition:color var(--tr); line-height:1; }
+.login-close:hover { color:var(--white); }
+.login-logo { font-family:'Playfair Display',serif; font-size:1.4rem; text-align:center; margin-bottom:0.2rem; }
+.login-logo .amp { color:var(--gold); }
+.login-sub { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--grey); text-align:center; margin-bottom:2.2rem; }
+.login-error { background:rgba(220,50,50,0.12); border:1px solid rgba(220,50,50,0.28); color:#ff7070; padding:0.65rem 0.9rem; margin-bottom:1.2rem; font-size:0.88rem; display:none; }
+.login-hint { text-align:center; margin-top:1.2rem; font-family:'Josefin Sans',sans-serif; font-size:0.54rem; letter-spacing:0.14em; color:var(--grey); }
+.login-hint em { color:var(--gold); font-style:normal; }
+
+/* ── DASHBOARD ── */
+.dash-sidebar { width:230px; flex-shrink:0; background:#0d0d0d; border-right:1px solid var(--border); min-height:100vh; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.dash-brand-wrap { padding:1.4rem 1.4rem 1.6rem; border-bottom:1px solid var(--border); margin-bottom:0.6rem; }
+.dash-brand-name { font-family:'Playfair Display',serif; font-size:1rem; }
+.dash-brand-role { font-family:'Josefin Sans',sans-serif; font-size:0.54rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-top:0.18rem; }
+.dash-nav-btn { display:flex; align-items:center; gap:0.7rem; padding:0.72rem 1.4rem; font-family:'Josefin Sans',sans-serif; font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(245,243,240,0.42); cursor:pointer; transition:all var(--tr); border-left:2px solid transparent; background:none; border-right:none; border-top:none; border-bottom:none; width:100%; text-align:left; }
+.dash-nav-btn:hover { color:var(--white); background:rgba(255,255,255,0.028); }
+.dash-nav-btn.active { color:var(--gold); border-left-color:var(--gold); background:rgba(201,168,76,0.055); }
+.dash-nav-btn .ic { font-size:0.95rem; flex-shrink:0; }
+.dash-logout-btn { margin-top:auto; padding:0.72rem 1.4rem; font-family:'Josefin Sans',sans-serif; font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(245,243,240,0.28); cursor:pointer; background:none; border:none; width:100%; text-align:left; display:flex; align-items:center; gap:0.7rem; transition:color var(--tr); }
+.dash-logout-btn:hover { color:#e05555; }
+.dash-main { flex:1; padding:2.5rem; overflow-y:auto; }
+.dash-section { display:none; }
+.dash-section.active { display:block; }
+.dash-title { font-family:'Playfair Display',serif; font-size:1.85rem; margin-bottom:0.35rem; }
+.dash-subtitle { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); margin-bottom:2.2rem; }
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:1rem; margin-bottom:2.5rem; }
+.kpi-card { background:var(--surface); border:1px solid var(--border); padding:1.3rem; }
+.kpi-label { font-family:'Josefin Sans',sans-serif; font-size:0.54rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--grey); }
+.kpi-value { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); margin:0.4rem 0; }
+.kpi-change { font-size:0.82rem; color:#4ece7a; }
+.kpi-change.down { color:#e05555; }
+.dash-table { width:100%; border-collapse:collapse; margin-bottom:1.5rem; font-size:0.88rem; }
+.dash-table th { font-family:'Josefin Sans',sans-serif; font-size:0.54rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); padding:0.72rem 0.9rem; text-align:left; border-bottom:1px solid var(--border); }
+.dash-table td { padding:0.82rem 0.9rem; color:var(--muted); border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+.dash-table tr:hover td { background:rgba(255,255,255,0.018); }
+.badge { font-family:'Josefin Sans',sans-serif; font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.22rem 0.55rem; display:inline-block; }
+.badge-green  { background:rgba(78,206,122,0.14);  color:#4ece7a; }
+.badge-yellow { background:rgba(240,173,78,0.14);  color:#f0ad4e; }
+.badge-red    { background:rgba(220,50,50,0.14);   color:#e05555; }
+.inv-form { background:var(--surface); border:1px solid var(--border); padding:1.6rem; margin-bottom:1.6rem; }
+.inv-form-title { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); margin-bottom:1.2rem; }
+.inv-form-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:0.9rem; align-items:end; }
+.upload-area { border:2px dashed rgba(255,255,255,0.14); background:rgba(255,255,255,0.025); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem; min-height:88px; text-align:center; cursor:pointer; transition:all var(--tr); }
+.upload-area:hover { border-color:var(--gold); background:rgba(201,168,76,0.04); }
+.upload-icon { font-size:1.5rem; margin-bottom:0.3rem; }
+.upload-text { font-family:'Josefin Sans',sans-serif; font-size:0.52rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--grey); }
+.upload-preview { width:100%; height:64px; object-fit:cover; border:1px solid var(--border); display:none; }
+.upload-preview.visible { display:block; }
+.inv-thumb { width:36px; height:36px; object-fit:cover; border:1px solid var(--border); vertical-align:middle; margin-right:0.5rem; }
+.settings-box { background:var(--surface); border:1px solid var(--border); padding:1.8rem; max-width:460px; }
+.settings-title { font-family:'Josefin Sans',sans-serif; font-size:0.58rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--gold); margin-bottom:1.2rem; }
+
+/* ── TOAST ── */
+.toast { position:fixed; bottom:1.8rem; right:1.8rem; z-index:9999; background:var(--gold); color:var(--black); padding:0.82rem 1.3rem; font-family:'Josefin Sans',sans-serif; font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; pointer-events:none; transform:translateY(60px); opacity:0; transition:transform 0.35s ease,opacity 0.35s ease; }
+.toast.visible { transform:translateY(0); opacity:1; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:900px) {
+  #main-nav { padding:1rem 1.5rem; }
+  .nav-links { display:none; }
+  .contact-wrap { grid-template-columns:1fr; }
+  .pm-box { grid-template-columns:1fr; }
+  .pm-image-side { min-height:220px; font-size:5rem; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .stats-row { grid-template-columns:1fr; }
+  .dash-sidebar { width:52px; }
+  .dash-brand-wrap,.dash-brand-name,.dash-brand-role { display:none; }
+  .dash-nav-btn span:last-child,.dash-logout-btn span:last-child { display:none; }
+  .dash-nav-btn { justify-content:center; padding:0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="navigate('home')">Z<span class="amp">&amp;</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a data-page="home"    onclick="navigate('home')"    class="active">Home</a></li>
+    <li><a data-page="shop"    onclick="navigate('shop')">Shop</a></li>
+    <li><a data-page="about"   onclick="navigate('about')">About</a></li>
+    <li><a data-page="contact" onclick="navigate('contact')">Contact</a></li>
+  </ul>
+  <button class="btn-nav" onclick="openLogin()">Owner Login</button>
+</nav>
+
+<!-- ════ HOME ════ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <p class="hero-eye">Est. 2025 &nbsp;&middot;&nbsp; Vestiario Collection</p>
+    <h1 class="hero-title"><em>Z</em>&amp;<em>J's</em></h1>
+    <p class="hero-vs">Vestiario</p>
+    <p class="hero-sub">Your ultimate destination for everything you need. Stylish clothes, reliable gadgets, and everything in between — we've got it all.</p>
+    <p class="hero-tag">No limits, just possibilities</p>
+    <div class="hero-ctas">
+      <button class="btn-gold"    onclick="navigate('shop')">Shop Now</button>
+      <button class="btn-outline" onclick="navigate('about')">Our Story</button>
+    </div>
+  </section>
+
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item">Male &amp; Female Footwear<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Gadgets &amp; Tech<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Male &amp; Female Clothing<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">If it exists, we've got it<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Male &amp; Female Footwear<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Gadgets &amp; Tech<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">Male &amp; Female Clothing<span class="marquee-dot">✦</span></span>
+      <span class="marquee-item">If it exists, we've got it<span class="marquee-dot">✦</span></span>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="lbl">Browse by Category</p>
+    <h2 class="ttl">Everything <em>You Need</em></h2>
+    <div class="cat-grid">
+      <div class="cat-card" onclick="navigate('shop'); setTimeout(()=>filterShop('footwear'),10)">
+        <div class="cat-icon">👟</div>
+        <div class="cat-ov"><div class="cat-name">Footwear</div><div class="cat-desc">Male &amp; Female</div></div>
+      </div>
+      <div class="cat-card" onclick="navigate('shop'); setTimeout(()=>filterShop('gadgets'),10)">
+        <div class="cat-icon">📱</div>
+        <div class="cat-ov"><div class="cat-name">Gadgets</div><div class="cat-desc">Tech &amp; Accessories</div></div>
+      </div>
+      <div class="cat-card" onclick="navigate('shop'); setTimeout(()=>filterShop('clothing'),10)">
+        <div class="cat-icon">👗</div>
+        <div class="cat-ov"><div class="cat-name">Clothing</div><div class="cat-desc">Male &amp; Female</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promise-strip">
+    <p class="promise-quote">"Shop with us and discover a world where everything is <em style="font-style:italic;color:var(--gold)">at your fingertips</em>"</p>
+    <div class="promise-badges">
+      <div class="promise-badge"><div class="promise-icon">★</div><div class="promise-label">Premium Quality</div></div>
+      <div class="promise-badge"><div class="promise-icon">⚡</div><div class="promise-label">Fast Delivery</div></div>
+      <div class="promise-badge"><div class="promise-icon">🔒</div><div class="promise-label">Secure Shopping</div></div>
+      <div class="promise-badge"><div class="promise-icon">↩</div><div class="promise-label">Easy Returns</div></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Z<span class="amp">&amp;</span>J's</div>
+        <p class="footer-tagline">If it exists, we've got it</p>
+        <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Shop</div>
+        <a class="footer-link" onclick="navigate('shop'); setTimeout(()=>filterShop('footwear'),10)">Footwear</a>
+        <a class="footer-link" onclick="navigate('shop'); setTimeout(()=>filterShop('gadgets'),10)">Gadgets</a>
+        <a class="footer-link" onclick="navigate('shop'); setTimeout(()=>filterShop('clothing'),10)">Clothing</a>
+        <a class="footer-link" onclick="navigate('shop')">All Products</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <a class="footer-link" onclick="navigate('about')">About Us</a>
+        <a class="footer-link" onclick="navigate('contact')">Contact</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <span class="footer-link">hello@zandjsvestiario.com</span>
+        <span class="footer-link">+234 8168 231546</span>
+        <span class="footer-link">Kano, Nigeria</span>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2025 Z&amp;J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+  </footer>
+</div>
+
+<!-- ════ SHOP ════ -->
+<div id="page-shop" class="page">
+  <div class="shop-header">
+    <p class="lbl">Browse Our Selection</p>
+    <h2 class="ttl" style="margin-bottom:0">The <em>Collection</em></h2>
+    <div class="filter-bar">
+      <button class="flt-btn active" onclick="filterShop('all',this)">All</button>
+      <button class="flt-btn" onclick="filterShop('footwear',this)">Footwear</button>
+      <button class="flt-btn" onclick="filterShop('gadgets',this)">Gadgets</button>
+      <button class="flt-btn" onclick="filterShop('clothing',this)">Clothing</button>
+    </div>
+  </div>
+  <div class="products-grid" id="products-grid"></div>
+</div>
+
+<!-- ════ ABOUT ════ -->
+<div id="page-about" class="page">
+  <div class="about-hero">
+    <div>
+      <p class="lbl">Our Story</p>
+      <h1 class="about-title">Built on the belief that <em>everything</em> should be within reach.</h1>
+      <p class="about-body">Z&amp;J's Vestiario was founded with one bold vision: no limits, just possibilities. We curate the finest in fashion, footwear, and gadgets — bringing them together under one roof so you never have to look elsewhere.</p>
+      <p class="about-body" style="margin-top:1rem">Whether you're refreshing your wardrobe, upgrading your tech, or finding that perfect pair of shoes, Z&amp;J's is your ultimate destination.</p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div><div class="stat-num">500+</div><div class="stat-lbl">Products Available</div></div>
+    <div><div class="stat-num">3</div><div class="stat-lbl">Core Categories</div></div>
+    <div><div class="stat-num">100%</div><div class="stat-lbl">Satisfaction Guaranteed</div></div>
+  </div>
+  <div style="background:#0d0d0d;border-top:1px solid var(--border);padding:5rem 2.5rem;text-align:center">
+    <p class="lbl">Our Promise</p>
+    <h2 class="ttl">"If it exists, <em>we've got it"</em></h2>
+    <p style="font-size:1rem;color:var(--muted);line-height:1.85;max-width:580px;margin:0 auto 2rem">From stylish clothes to reliable gadgets and everything in between, Z&amp;J's Vestiario is committed to quality, variety, and an unparalleled shopping experience.</p>
+    <button class="btn-gold" onclick="navigate('shop')">Explore the Collection</button>
+  </div>
+</div>
+
+<!-- ════ CONTACT ════ -->
+<div id="page-contact" class="page">
+  <div class="contact-wrap">
+    <div class="contact-left">
+      <p class="lbl">Get in Touch</p>
+      <h2 class="contact-title">We'd love<br>to hear<br>from you.</h2>
+      <p style="font-size:0.95rem;color:var(--muted);line-height:1.8;margin:1.2rem 0 2.5rem">Whether you have a question, need help with an order, or just want to say hello — we're always here.</p>
+      <div class="ci-row"><div class="ci-lbl">Email</div><div class="ci-val">hello@zandjsvestiario.com</div></div>
+      <div class="ci-row"><div class="ci-lbl">Phone</div><div class="ci-val">+234 8168 231546</div></div>
+      <div class="ci-row"><div class="ci-lbl">Location</div><div class="ci-val">Kano, Nigeria</div></div>
+      <div class="ci-row"><div class="ci-lbl">Hours</div><div class="ci-val">Mon – Sat: 9am – 6pm</div></div>
+    </div>
+    <div class="contact-right">
+      <p class="lbl">Send a Message</p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;margin-bottom:1.5rem">Write to us</h3>
+      <div class="fgrp"><label>Your Name</label><input type="text" id="c-name" placeholder="Full name"></div>
+      <div class="fgrp"><label>Email Address</label><input type="email" id="c-email" placeholder="your@email.com"></div>
+      <div class="fgrp"><label>Subject</label><input type="text" id="c-subject" placeholder="Order query, product info..."></div>
+      <div class="fgrp"><label>Message</label><textarea id="c-message" placeholder="Tell us how we can help..."></textarea></div>
+      <button class="btn-gold" onclick="submitContact()" style="width:100%">Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ DASHBOARD ════ -->
+<div id="page-dashboard" class="page">
+  <aside class="dash-sidebar">
+    <div class="dash-brand-wrap">
+      <div class="dash-brand-name">Z&amp;J's Vestiario</div>
+      <div class="dash-brand-role">Owner Dashboard</div>
+    </div>
+    <button class="dash-nav-btn active" onclick="showDashTab('overview',this)"><span class="ic">📊</span><span>Overview</span></button>
+    <button class="dash-nav-btn" onclick="showDashTab('orders',this)"><span class="ic">📦</span><span>Orders</span></button>
+    <button class="dash-nav-btn" onclick="showDashTab('products',this)"><span class="ic">🛍️</span><span>Products</span></button>
+    <button class="dash-nav-btn" onclick="showDashTab('customers',this)"><span class="ic">👥</span><span>Customers</span></button>
+    <button class="dash-nav-btn" onclick="showDashTab('messages',this)"><span class="ic">💬</span><span>Messages</span></button>
+    <button class="dash-nav-btn" onclick="showDashTab('settings',this)"><span class="ic">⚙️</span><span>Settings</span></button>
+    <button class="dash-logout-btn" onclick="logout()"><span class="ic">🚪</span><span>Logout</span></button>
+  </aside>
+  <main class="dash-main">
+
+    <!-- OVERVIEW -->
+    <section class="dash-section active" id="ds-overview">
+      <h2 class="dash-title">Good day, Owner</h2>
+      <p class="dash-subtitle">Here's what's happening at Z&amp;J's today</p>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value">₦124,800</div><div class="kpi-change">↑ 14% this month</div></div>
+        <div class="kpi-card"><div class="kpi-label">Orders Today</div><div class="kpi-value">28</div><div class="kpi-change">↑ 6 from yesterday</div></div>
+        <div class="kpi-card"><div class="kpi-label">Total Customers</div><div class="kpi-value">342</div><div class="kpi-change">↑ 22 new this week</div></div>
+        <div class="kpi-card"><div class="kpi-label">Products Listed</div><div class="kpi-value" id="kpi-products">12</div><div class="kpi-change">Across 3 categories</div></div>
+        <div class="kpi-card"><div class="kpi-label">Avg Order Value</div><div class="kpi-value">₦45,000</div><div class="kpi-change">↑ 8% vs last month</div></div>
+        <div class="kpi-card"><div class="kpi-label">Pending Shipments</div><div class="kpi-value">7</div><div class="kpi-change down">Needs attention</div></div>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1.1rem">Recent Orders</h3>
+      <table class="dash-table">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody id="dash-recent-orders"></tbody>
+      </table>
+    </section>
+
+    <!-- ORDERS -->
+    <section class="dash-section" id="ds-orders">
+      <h2 class="dash-title">Orders</h2>
+      <p class="dash-subtitle">All customer orders</p>
+      <table class="dash-table">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="dash-all-orders"></tbody>
+      </table>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="dash-section" id="ds-products">
+      <h2 class="dash-title">Inventory</h2>
+      <p class="dash-subtitle">Manage products and photos</p>
+      <div class="inv-form">
+        <p class="inv-form-title">Add New Product</p>
+        <div class="inv-form-grid">
+          <div class="fgrp"><label>Product Name</label><input type="text" id="inv-name" placeholder="e.g. Air Max 270"></div>
+          <div class="fgrp"><label>Category</label>
+            <select id="inv-cat">
+              <option value="footwear">Footwear</option>
+              <option value="gadgets">Gadgets</option>
+              <option value="clothing">Clothing</option>
+            </select>
+          </div>
+          <div class="fgrp"><label>Price (₦)</label><input type="number" id="inv-price" placeholder="45" min="0" step="0.01"></div>
+          <div class="fgrp"><label>Stock</label><input type="number" id="inv-stock" placeholder="100" min="0" step="1"></div>
+          <div class="fgrp"><label>Gender</label>
+            <select id="inv-gender">
+              <option value="Unisex">Unisex</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div class="fgrp">
+            <label>Product Photo (optional)</label>
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('inv-img-input').click()">
+              <input type="file" id="inv-img-input" accept="image/*" style="display:none" onchange="handleNewProductImage(this)">
+              <img id="inv-img-preview" class="upload-preview" alt="Preview">
+              <div id="upload-placeholder"><div class="upload-icon">📷</div><div class="upload-text">Click to upload</div></div>
+            </div>
+          </div>
+          <div class="fgrp" style="display:flex;align-items:flex-end">
+            <button class="btn-gold" onclick="addProduct()" style="width:100%;padding:0.75rem 1rem">Add Product</button>
+          </div>
+        </div>
+      </div>
+      <table class="dash-table">
+        <thead><tr><th>Photo</th><th>Name</th><th>Category</th><th>Gender</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+        <tbody id="inv-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- CUSTOMERS -->
+    <section class="dash-section" id="ds-customers">
+      <h2 class="dash-title">Customers</h2>
+      <p class="dash-subtitle">Registered customer base</p>
+      <table class="dash-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Total Orders</th><th>Total Spent</th><th>Member Since</th></tr></thead>
+        <tbody>
+          <tr><td>Sarah J.</td><td>sarah@example.com</td><td>8</td><td>₦342</td><td>Jan 2024</td></tr>
+          <tr><td>Marcus T.</td><td>marcus@example.com</td><td>5</td><td>₦210</td><td>Feb 2024</td></tr>
+          <tr><td>Aisha B.</td><td>aisha@example.com</td><td>12</td><td>₦578</td><td>Jan 2024</td></tr>
+          <tr><td>Daniel O.</td><td>daniel@example.com</td><td>3</td><td>₦95</td><td>Mar 2024</td></tr>
+          <tr><td>Priya M.</td><td>priya@example.com</td><td>7</td><td>₦289</td><td>Feb 2024</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="dash-section" id="ds-messages">
+      <h2 class="dash-title">Messages</h2>
+      <p class="dash-subtitle">Customer enquiries from the contact form</p>
+      <table class="dash-table">
+        <thead><tr><th>From</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="messages-tbody">
+          <tr><td>Emma R.</td><td>Order delay query</td><td>My order #1042 hasn't arrived...</td><td>Today</td><td><span class="badge badge-yellow">Pending</span></td></tr>
+          <tr><td>John K.</td><td>Product availability</td><td>Do you have size 10 in the Air Max?</td><td>Yesterday</td><td><span class="badge badge-green">Replied</span></td></tr>
+          <tr><td>Fatima A.</td><td>Return request</td><td>I'd like to return a jacket I ordered...</td><td>2 days ago</td><td><span class="badge badge-red">Urgent</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="dash-section" id="ds-settings">
+      <h2 class="dash-title">Settings</h2>
+      <p class="dash-subtitle">Configure your store</p>
+      <div class="settings-box" style="margin-bottom:1.5rem">
+        <p class="settings-title">WhatsApp Business Number</p>
+        <div class="fgrp"><label>Phone Number (international, digits only — no + or spaces)</label><input type="text" id="wa-input" placeholder="e.g. 447712345678"></div>
+        <p style="font-family:'Josefin Sans',sans-serif;font-size:0.54rem;letter-spacing:0.12em;color:var(--grey);margin-bottom:1.1rem">Current: <span id="wa-display" style="color:var(--gold)">447700000000</span></p>
+        <button class="btn-gold" onclick="saveWaNumber()">Save Number</button>
+      </div>
+      <div class="settings-box">
+        <p class="settings-title">Change Owner Password</p>
+        <div class="fgrp"><label>New Password (min 6 characters)</label><input type="password" id="new-password" placeholder="New password"></div>
+        <button class="btn-gold" onclick="savePassword()">Update Password</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ════ PRODUCT MODAL ════ -->
+<div class="pm-overlay" id="product-modal" onclick="handlePmOverlayClick(event)">
+  <div class="pm-box">
+    <button class="pm-close" onclick="closeProductModal()" aria-label="Close">&times;</button>
+    <div class="pm-image-side" id="pm-image-side"><span id="pm-emoji">👟</span></div>
+    <div class="pm-info-side">
+      <div class="pm-cat"    id="pm-cat"></div>
+      <h2  class="pm-name"  id="pm-name"></h2>
+      <div class="pm-gender" id="pm-gender"></div>
+      <div class="pm-price"  id="pm-price"></div>
+      <div class="pm-stock"  id="pm-stock"></div>
+      <hr  class="pm-divider">
+      <p   class="pm-desc">A premium quality item from Z&amp;J's Vestiario, curated for style, comfort and durability. Contact us on WhatsApp to ask about sizing, check availability, and place your order — we respond fast!</p>
+      <a   class="btn-wa" id="pm-wa-btn" href="#" target="_blank" rel="noopener noreferrer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Enquire on WhatsApp
+      </a>
+      <p class="pm-wa-note">Tap to chat &middot; We reply quickly</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════ LOGIN MODAL ════ -->
+<div class="modal-overlay" id="login-modal" onclick="handleLoginOverlayClick(event)">
+  <div class="login-box">
+    <button class="login-close" onclick="closeLogin()" aria-label="Close">&times;</button>
+    <div class="login-logo">Z<span class="amp">&amp;</span>J's</div>
+    <p class="login-sub">Owner Access Only</p>
+    <div class="login-error" id="login-error">Invalid credentials. Please try again.</div>
+    <div class="fgrp"><label>Username</label><input type="text" id="login-username" placeholder="owner" autocomplete="username"></div>
+    <div class="fgrp"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-gold" onclick="doLogin()" style="width:100%;margin-top:0.4rem">Access Dashboard</button>
+    <!-- <p class="login-hint">username <em>owner</em> &nbsp;/&nbsp; password <em>zandjs2024</em></p> -->
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* ══ CONFIG ══ */
+let WA_NUMBER = '2348167231546';
+let OWNER_PASSWORD = 'zandjs2024';
+
+// Currency conversion (GBP -> NGN)
+const GBP_TO_NGN = 1600; // adjust as needed
+function toNaira(gbp) {
+  return Math.round(Number(gbp) * GBP_TO_NGN);
+}
+
+function formatNaira(amount) {
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount);
+}
+
+/* ══ DATA ══ */
+let products = [
+  {id:1,  name:'Classic Leather Sneaker', cat:'footwear', gender:'Male',   price:89,  stock:40,  icon:'👟', image:null},
+  {id:2,  name:'Heel Ankle Boot',         cat:'footwear', gender:'Female', price:112, stock:25,  icon:'👢', image:null},
+  {id:3,  name:'Running Trainer',         cat:'footwear', gender:'Unisex', price:75,  stock:60,  icon:'👟', image:null},
+  {id:4,  name:'Wireless Earbuds Pro',    cat:'gadgets',  gender:'Unisex', price:55,  stock:80,  icon:'🎧', image:null},
+  {id:5,  name:'Smart Watch X3',          cat:'gadgets',  gender:'Unisex', price:145, stock:30,  icon:'⌚', image:null},
+  {id:6,  name:'Portable Charger 20K',    cat:'gadgets',  gender:'Unisex', price:38,  stock:100, icon:'🔋', image:null},
+  {id:7,  name:'Slim Fit Oxford Shirt',   cat:'clothing', gender:'Male',   price:48,  stock:55,  icon:'👔', image:null},
+  {id:8,  name:'Floral Wrap Dress',       cat:'clothing', gender:'Female', price:65,  stock:35,  icon:'👗', image:null},
+  {id:9,  name:'Oversized Hoodie',        cat:'clothing', gender:'Unisex', price:52,  stock:70,  icon:'🧥', image:null},
+  {id:10, name:'Cargo Joggers',           cat:'clothing', gender:'Male',   price:44,  stock:50,  icon:'👖', image:null},
+  {id:11, name:'LED Desk Lamp',           cat:'gadgets',  gender:'Unisex', price:28,  stock:90,  icon:'💡', image:null},
+  {id:12, name:'Platform Sandal',         cat:'footwear', gender:'Female', price:68,  stock:20,  icon:'👡', image:null},
+];
+let nextProductId = 13;
+let pendingImageData = null;
+let currentFilter = 'all';
+
+const orders = [
+  {id:'#1041', customer:'Sarah J.',  product:'Smart Watch X3',    amount:145, date:'Today',     status:'delivered'},
+  {id:'#1042', customer:'Marcus T.', product:'Running Trainer',   amount:75,  date:'Today',     status:'shipped'},
+  {id:'#1043', customer:'Aisha B.',  product:'Floral Wrap Dress', amount:65,  date:'Yesterday', status:'processing'},
+  {id:'#1044', customer:'Daniel O.', product:'Wireless Earbuds',  amount:55,  date:'Yesterday', status:'delivered'},
+  {id:'#1045', customer:'Priya M.',  product:'Heel Ankle Boot',   amount:112, date:'2 days ago',status:'shipped'},
+  {id:'#1046', customer:'Tom W.',    product:'Oversized Hoodie',  amount:52,  date:'3 days ago',status:'delivered'},
+];
+
+/* ══ UTILITIES ══ */
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function statusBadge(s) {
+  const m = {delivered:['badge-green','Delivered'], shipped:['badge-yellow','Shipped'], processing:['badge-red','Processing']};
+  const [cls, lbl] = m[s] || ['badge-yellow', s];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('visible'), 3200);
+}
+
+/* ══ NAVIGATION ══ */
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-links li a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('data-page') === page);
+  });
+  document.getElementById('main-nav').style.display = 'flex';
+  window.scrollTo({top:0, behavior:'instant'});
+  if (page === 'shop') renderProducts(currentFilter);
+}
+
+/* ══ SHOP ══ */
+function filterShop(cat, btnEl) {
+  currentFilter = cat;
+  renderProducts(cat);
+  document.querySelectorAll('.flt-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) {
+    btnEl.classList.add('active');
+  } else {
+    document.querySelectorAll('.flt-btn').forEach(b => {
+      const txt = b.textContent.trim().toLowerCase();
+      if ((cat === 'all' && txt === 'all') || txt === cat) b.classList.add('active');
+    });
+  }
+}
+
+const WA_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
+function renderProducts(filter) {
+  const grid = document.getElementById('products-grid');
+  const list = filter === 'all' ? products : products.filter(p => p.cat === filter);
+  if (!list.length) {
+    grid.innerHTML = '<p style="padding:3rem 2rem;color:var(--grey);font-family:Josefin Sans,sans-serif;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase">No products found.</p>';
+    return;
+  }
+  grid.innerHTML = list.map(p => {
+    const imgHTML = p.image
+      ? `<img src="${p.image}" alt="${esc(p.name)}">`
+      : `<span class="prod-emoji">${p.icon}</span>`;
+    return `<article class="prod-card" onclick="openProductModal(${p.id})" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' ')openProductModal(${p.id})">
+      <div class="prod-img-wrap">${imgHTML}</div>
+      <div class="prod-info">
+        <div class="prod-name">${esc(p.name)}</div>
+        <div class="prod-meta">${esc(p.gender)} &middot; ${p.cat}</div>
+        <div class="prod-price">${formatNaira(toNaira(p.price))}</div>
+        <div class="prod-wa-hint">${WA_SVG} Enquire on WhatsApp</div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+/* ══ PRODUCT MODAL ══ */
+function openProductModal(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+
+  const imgSide = document.getElementById('pm-image-side');
+  imgSide.querySelectorAll('img').forEach(i => i.remove());
+  const emojiEl = document.getElementById('pm-emoji');
+  if (p.image) {
+    emojiEl.style.display = 'none';
+    const img = document.createElement('img');
+    img.src = p.image; img.alt = p.name;
+    imgSide.appendChild(img);
+  } else {
+    emojiEl.style.display = '';
+    emojiEl.textContent = p.icon;
+  }
+
+  document.getElementById('pm-cat').textContent    = p.cat.charAt(0).toUpperCase() + p.cat.slice(1) + ' \u00B7 ' + p.gender;
+  document.getElementById('pm-name').textContent   = p.name;
+  document.getElementById('pm-gender').textContent = p.gender;
+  document.getElementById('pm-price').textContent  = formatNaira(toNaira(p.price));
+
+  const stockEl = document.getElementById('pm-stock');
+  stockEl.textContent = p.stock > 0
+    ? '\u2713 In Stock \u2014 ' + p.stock + ' available'
+    : '\u2717 Out of Stock';
+  stockEl.className = 'pm-stock' + (p.stock > 0 ? '' : ' out');
+
+  const msg = encodeURIComponent(
+    'Hi Z&J\u2019s Vestiario! \uD83D\uDC4B I\u2019m interested in the *' + p.name +
+    '* (' + formatNaira(toNaira(p.price)) + '). Can you help me with more details and ordering? Thank you!'
+  );
+  document.getElementById('pm-wa-btn').href = 'https://wa.me/' + WA_NUMBER + '?text=' + msg;
+
+  document.getElementById('product-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProductModal() {
+  document.getElementById('product-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handlePmOverlayClick(e) {
+  if (e.target === document.getElementById('product-modal')) closeProductModal();
+}
+
+/* ══ LOGIN ══ */
+function openLogin() {
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-modal').classList.add('open');
+  setTimeout(() => document.getElementById('login-username').focus(), 60);
+}
+function closeLogin() { document.getElementById('login-modal').classList.remove('open'); }
+function handleLoginOverlayClick(e) { if (e.target === document.getElementById('login-modal')) closeLogin(); }
+
+function doLogin() {
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value;
+  if (u === 'owner' && p === OWNER_PASSWORD) {
+    closeLogin();
+    openDashboard();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+/* ══ DASHBOARD ══ */
+function openDashboard() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-dashboard').classList.add('active');
+  document.getElementById('main-nav').style.display = 'none';
+  renderDashboard();
+}
+
+function logout() {
+  document.getElementById('page-dashboard').classList.remove('active');
+  navigate('home');
+  showToast('Logged out successfully');
+}
+
+function showDashTab(tab, btnEl) {
+  document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.dash-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('ds-' + tab).classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+}
+
+function renderDashboard() {
+  document.getElementById('dash-recent-orders').innerHTML = orders.slice(0,5).map(o =>
+    `<tr><td>${o.id}</td><td>${esc(o.customer)}</td><td>${esc(o.product)}</td><td>${formatNaira(toNaira(o.amount))}</td><td>${statusBadge(o.status)}</td></tr>`
+  ).join('');
+  document.getElementById('dash-all-orders').innerHTML = orders.map(o =>
+    `<tr><td>${o.id}</td><td>${esc(o.customer)}</td><td>1</td><td>${formatNaira(toNaira(o.amount))}</td><td>${o.date}</td><td>${statusBadge(o.status)}</td></tr>`
+  ).join('');
+  renderInventory();
+  updateProductCount();
+  document.getElementById('wa-display').textContent = WA_NUMBER;
+}
+
+function updateProductCount() {
+  document.getElementById('kpi-products').textContent = products.length;
+}
+
+/* ══ INVENTORY ══ */
+function renderInventory() {
+  document.getElementById('inv-tbody').innerHTML = products.map(p => {
+    const thumb = p.image
+      ? `<img src="${p.image}" class="inv-thumb" alt="${esc(p.name)}">`
+      : `<span style="font-size:1.5rem">${p.icon}</span>`;
+    return `<tr>
+      <td>${thumb}</td>
+      <td>${esc(p.name)}</td>
+      <td style="text-transform:capitalize">${p.cat}</td>
+      <td>${p.gender}</td>
+      <td>${formatNaira(toNaira(p.price))}</td>
+      <td>${p.stock}</td>
+      <td style="white-space:nowrap">
+        <label class="btn-sm btn-accent" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+          &#128247; Photo
+          <input type="file" accept="image/*" style="display:none" onchange="changeProductImage(${p.id},this)">
+        </label>
+        &nbsp;
+        <button class="btn-sm btn-danger" onclick="removeProduct(${p.id})">&#10005; Remove</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══ IMAGE HANDLING ══ */
+function handleNewProductImage(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    pendingImageData = e.target.result;
+    const prev = document.getElementById('inv-img-preview');
+    prev.src = pendingImageData;
+    prev.classList.add('visible');
+    document.getElementById('upload-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function changeProductImage(id, input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const p = products.find(x => x.id === id);
+    if (p) { p.image = e.target.result; renderInventory(); showToast('Photo updated!'); }
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ══ ADD / REMOVE ══ */
+function addProduct() {
+  const name  = document.getElementById('inv-name').value.trim();
+  const cat   = document.getElementById('inv-cat').value;
+  const price = parseFloat(document.getElementById('inv-price').value);
+  const stock = parseInt(document.getElementById('inv-stock').value, 10);
+  const gender= document.getElementById('inv-gender').value;
+
+  if (!name)                      { showToast('Please enter a product name'); return; }
+  if (isNaN(price) || price <= 0) { showToast('Please enter a valid price');  return; }
+  if (isNaN(stock) || stock < 0)  { showToast('Please enter valid stock');    return; }
+
+  const icons = {footwear:'👟', gadgets:'📱', clothing:'👗'};
+  products.push({id: nextProductId++, name, cat, gender, price, stock, icon: icons[cat] || '📦', image: pendingImageData});
+
+  renderInventory();
+  updateProductCount();
+
+  // Reset form
+  ['inv-name','inv-price','inv-stock'].forEach(id => document.getElementById(id).value = '');
+  pendingImageData = null;
+  const prev = document.getElementById('inv-img-preview');
+  prev.src = ''; prev.classList.remove('visible');
+  document.getElementById('upload-placeholder').style.display = '';
+  document.getElementById('inv-img-input').value = '';
+  showToast('Product added successfully!');
+}
+
+function removeProduct(id) {
+  products = products.filter(p => p.id !== id);
+  renderInventory();
+  updateProductCount();
+  showToast('Product removed');
+}
+
+/* ══ CONTACT FORM ══ */
+function submitContact() {
+  const name    = document.getElementById('c-name').value.trim();
+  const email   = document.getElementById('c-email').value.trim();
+  const subject = document.getElementById('c-subject').value.trim();
+  const message = document.getElementById('c-message').value.trim();
+
+  if (!name || !email || !message) { showToast('Please fill in name, email and message'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email address'); return; }
+
+  const tbody = document.getElementById('messages-tbody');
+  const today = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short'});
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${esc(name)}</td><td>${esc(subject||'(No subject)')}</td><td>${esc(message.slice(0,50))}${message.length>50?'...':''}</td><td>Today (${today})</td><td><span class="badge badge-yellow">Pending</span></td>`;
+  tbody.insertBefore(row, tbody.firstChild);
+
+  ['c-name','c-email','c-subject','c-message'].forEach(id => document.getElementById(id).value = '');
+  showToast("Message sent! We'll be in touch soon.");
+}
+
+/* ══ SETTINGS ══ */
+function saveWaNumber() {
+  const num = document.getElementById('wa-input').value.trim();
+  if (!num || !/^\d{7,15}$/.test(num)) { showToast('Enter a valid number (7–15 digits, digits only)'); return; }
+  WA_NUMBER = num;
+  document.getElementById('wa-display').textContent = WA_NUMBER;
+  document.getElementById('wa-input').value = '';
+  showToast('WhatsApp number saved!');
+}
+
+function savePassword() {
+  const np = document.getElementById('new-password').value;
+  if (!np || np.length < 6) { showToast('Password must be at least 6 characters'); return; }
+  OWNER_PASSWORD = np;
+  document.getElementById('new-password').value = '';
+  showToast('Password updated!');
+}
+
+/* ══ KEYBOARD ══ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeProductModal(); closeLogin(); }
+});
+
+/* ══ INIT ══ */
+renderProducts('all');
+</script>
+</body>
+</html>

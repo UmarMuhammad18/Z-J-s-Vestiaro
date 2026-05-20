@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link active">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<!-- Contact Section -->
+<div class="contact-wrap">
+  <div class="contact-left">
+    <h2 class="contact-title">Get in Touch</h2>
+    <p style="color: var(--muted); margin-bottom: 2rem; line-height: 1.8;">Have a question or feedback? We'd love to hear from you. Reach out through any of the channels below.</p>
+    
+    <div class="ci-row">
+      <div class="ci-lbl">📍 Address</div>
+      <div class="ci-val">Kano, Nigeria</div>
+    </div>
+    
+    <div class="ci-row">
+      <div class="ci-lbl">📞 Phone</div>
+      <div class="ci-val">+234 816 823 1546</div>
+    </div>
+    
+    <div class="ci-row">
+      <div class="ci-lbl">✉️ Email</div>
+      <div class="ci-val">hello@zandjsvestiario.com</div>
+    </div>
+    
+    <div class="ci-row">
+      <div class="ci-lbl">💬 WhatsApp</div>
+      <div class="ci-val">+234 816 823 1546</div>
+    </div>
+
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+      <p class="lbl">Business Hours</p>
+      <div style="font-size: 0.95rem; color: var(--muted);">
+        <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+        <p>Saturday: 10:00 AM - 4:00 PM</p>
+        <p>Sunday: Closed</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-right">
+    <h2 class="contact-title">Send us a Message</h2>
+    <form onsubmit="sendMessage(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div class="fgrp">
+        <label>Your Name</label>
+        <input type="text" required placeholder="John Doe" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+      </div>
+      
+      <div class="fgrp">
+        <label>Email Address</label>
+        <input type="email" required placeholder="john@example.com" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+      </div>
+      
+      <div class="fgrp">
+        <label>Subject</label>
+        <input type="text" required placeholder="How can we help?" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);">
+      </div>
+      
+      <div class="fgrp">
+        <label>Message</label>
+        <textarea required placeholder="Your message here..." style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);"></textarea>
+      </div>
+      
+      <button type="submit" class="btn-gold" style="width: 100%;">Send Message</button>
+    </form>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function sendMessage(e) {
+  e.preventDefault();
+  alert('Thank you for your message! We will get back to you soon.');
+  e.target.reset();
+}
+</script>
+</body>
+</html>

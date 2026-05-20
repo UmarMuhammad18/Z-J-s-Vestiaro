@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Login | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .login-container {
+      min-height: calc(100vh - 200px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+    }
+    
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3rem;
+      max-width: 450px;
+      width: 100%;
+      border-radius: 4px;
+    }
+    
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--white);
+    }
+    
+    .login-subtitle {
+      color: var(--muted);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    
+    @media (max-width: 900px) {
+      .login-box {
+        padding: 2rem;
+      }
+      
+      .login-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'" style="color: var(--gold);">Owner Login</button>
+  </div>
+</nav>
+
+<!-- Login Container -->
+<div class="login-container">
+  <div class="login-box">
+    <h1 class="login-title">Owner <em>Login</em></h1>
+    <p class="login-subtitle">Access your dashboard and manage inventory</p>
+    
+    <form onsubmit="handleLogin(event)">
+      <div class="fgrp">
+        <label>Email Address</label>
+        <input type="email" required placeholder="owner@zandjsvestiario.com" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); width: 100%;">
+      </div>
+      
+      <div class="fgrp">
+        <label>Password</label>
+        <input type="password" required placeholder="••••••••" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); width: 100%;">
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <input type="checkbox" id="remember" style="cursor: pointer;">
+        <label for="remember" style="cursor: pointer; font-size: 0.85rem;">Remember me</label>
+      </div>
+      
+      <button type="submit" class="btn-gold" style="width: 100%; padding: 0.82rem;">Sign In</button>
+    </form>
+    
+    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+      <p style="color: var(--muted); font-size: 0.85rem; text-align: center;">
+        Demo credentials:<br>
+        Email: <code style="color: var(--gold);">admin@example.com</code><br>
+        Password: <code style="color: var(--gold);">password123</code>
+      </p>
+    </div>
+    
+    <a href="index.html" style="display: block; text-align: center; margin-top: 1rem; color: var(--gold); text-decoration: none; font-size: 0.9rem;">← Back to Home</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function handleLogin(e) {
+  e.preventDefault();
+  const email = e.target.querySelector('input[type="email"]').value;
+  const password = e.target.querySelector('input[type="password"]').value;
+  
+  // Demo authentication
+  if (email === 'admin@example.com' && password === 'password123') {
+    localStorage.setItem('authToken', 'demo-token-' + Date.now());
+    localStorage.setItem('userRole', 'admin');
+    alert('Login successful!');
+    window.location.href = 'index.html';
+  } else {
+    alert('Invalid credentials. Try admin@example.com / password123');
+  }
+}
+</script>
+</body>
+</html>

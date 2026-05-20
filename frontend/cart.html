@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; color: var(--gold);">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<!-- Cart Container -->
+<div class="cart-container">
+  <h1 class="ttl" style="margin-top: 2rem;">Your <em>Shopping Cart</em></h1>
+  
+  <div class="cart-grid">
+    <div class="cart-items" id="cart-items">
+      <p style="color: var(--muted); text-align: center; padding: 2rem;">Your cart is empty</p>
+    </div>
+    
+    <div class="cart-summary">
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1rem;">Order Summary</h3>
+      
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="subtotal">$0.00</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Shipping</span>
+        <span id="shipping">Free</span>
+      </div>
+      
+      <div class="summary-row">
+        <span>Tax (5%)</span>
+        <span id="tax">$0.00</span>
+      </div>
+      
+      <div class="summary-total">
+        <span>Total: </span>
+        <span id="total">$0.00</span>
+      </div>
+      
+      <button class="btn-gold" style="width: 100%; margin-bottom: 0.8rem;" onclick="checkout()">Proceed to Checkout</button>
+      <a href="shop.html" class="btn-outline" style="width: 100%; text-align: center; display: block;">Continue Shopping</a>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function renderCart() {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const container = document.getElementById('cart-items');
+  
+  if (cart.length === 0) {
+    container.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 2rem;">Your cart is empty</p>';
+    updateCartTotals([]);
+    return;
+  }
+  
+  container.innerHTML = cart.map((item, idx) => `
+    <div class="cart-item">
+      <div class="cart-img">${item.emoji}</div>
+      <div class="cart-details">
+        <h3>${item.name}</h3>
+        <p>$${item.price.toFixed(2)} × ${item.quantity}</p>
+        <p style="margin-top: 0.5rem; color: var(--grey); font-size: 0.82rem;">${item.category}</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <button onclick="updateQuantity(${idx}, ${item.quantity - 1})" style="background: transparent; border: 1px solid var(--border); color: var(--white); padding: 0.3rem 0.5rem; cursor: pointer;">−</button>
+        <button onclick="updateQuantity(${idx}, ${item.quantity + 1})" style="background: transparent; border: 1px solid var(--border); color: var(--white); padding: 0.3rem 0.5rem; cursor: pointer;">+</button>
+        <button onclick="removeFromCart(${idx})" style="background: rgba(220,50,50,0.15); border: 1px solid rgba(220,50,50,0.28); color: #e05555; padding: 0.3rem 0.5rem; cursor: pointer;">✕</button>
+      </div>
+    </div>
+  `).join('');
+  
+  updateCartTotals(cart);
+}
+
+function updateQuantity(idx, quantity) {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  if (quantity <= 0) {
+    cart.splice(idx, 1);
+  } else {
+    cart[idx].quantity = quantity;
+  }
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
+function removeFromCart(idx) {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cart.splice(idx, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
+function updateCartTotals(cart) {
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const tax = subtotal * 0.05;
+  const total = subtotal + tax;
+  
+  document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+  document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+}
+
+function checkout() {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  if (cart.length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+  window.location.href = 'checkout.html';
+}
+
+document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+</body>
+</html>

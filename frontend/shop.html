@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link active">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<!-- Shop Header -->
+<div class="shop-header">
+  <p class="lbl">Browse Our Selection</p>
+  <h2 class="ttl" style="margin-bottom:0">The <em>Collection</em></h2>
+  <div class="filter-bar">
+    <button class="flt-btn active" onclick="filterShop('all', this)">All</button>
+    <button class="flt-btn" onclick="filterShop('footwear', this)">Footwear</button>
+    <button class="flt-btn" onclick="filterShop('gadgets', this)">Gadgets</button>
+    <button class="flt-btn" onclick="filterShop('clothing', this)">Clothing</button>
+  </div>
+</div>
+
+<!-- Products Grid -->
+<div class="products-grid" id="products-grid">
+  <!-- Loaded via JavaScript -->
+</div>
+
+<!-- Product Detail Modal -->
+<div class="pm-overlay" id="productModal">
+  <div class="pm-box">
+    <div class="pm-image-side" id="pm-image">👜</div>
+    <div class="pm-info-side">
+      <button class="pm-close" onclick="closeModal()">&times;</button>
+      <p class="pm-cat" id="pm-category">Category</p>
+      <h2 class="pm-name" id="pm-name">Product Name</h2>
+      <p class="pm-gender" id="pm-gender">Unisex</p>
+      <p class="pm-price" id="pm-price">$0.00</p>
+      <p class="pm-stock" id="pm-stock">In Stock</p>
+      <hr class="pm-divider">
+      <p class="pm-desc" id="pm-description">Product description goes here.</p>
+      <button class="btn-gold" style="width:100%; margin-top:auto" onclick="addToCart()">Add to Cart</button>
+      <p class="pm-wa-note">🟢 Order via WhatsApp for instant confirmation</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script src="shop.js"></script>
+</body>
+</html>
