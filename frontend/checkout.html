@@ -183,14 +183,14 @@ function processOrder(e) {
   if (paymentMethod === 'whatsapp') {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const message = `Hi! I'd like to place an order.\n\nCustomer: ${name}\n\nItems:\n${cart.map(item => `${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}\n\nTotal: ${document.getElementById('total').textContent}`;
-    const whatsappLink = `https://wa.me/+2348168231546?text=${encodeURIComponent(message)}`;
+    const whatsappLink = `https://wa.me/2348168231546?text=${encodeURIComponent(message)}`;
     window.open(whatsappLink, '_blank');
+    
+    localStorage.removeItem('cart');
+    setTimeout(() => window.location.href = 'index.html', 1000);
   } else {
-    alert('Card payment integration coming soon!');
+    alert('Card payment integration coming soon! Please use WhatsApp Order to place your order.');
   }
-  
-  localStorage.removeItem('cart');
-  setTimeout(() => window.location.href = 'index.html', 1000);
 }
 
 document.addEventListener('DOMContentLoaded', loadOrderSummary);
