@@ -1,5 +1,5 @@
 // controllers/authController.js - Authentication Controller
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import supabase from '../config-database.js';
 import { validateEmail, validatePassword } from '../utils-validators.js';
