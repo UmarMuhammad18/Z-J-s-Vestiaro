@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard-hero {
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+    }
+    .dashboard-hero .lbl { margin-bottom: 0.8rem; }
+    .dashboard-hero .ttl { margin-bottom: 1rem; }
+    .dashboard-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
+    .dashboard-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .dash-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 1.6rem; border-radius: 0.85rem; min-height: 150px; }
+    .dash-card h3 { font-size: 1rem; color: var(--muted); margin-bottom: 0.8rem; }
+    .dash-card .dash-value { font-size: 2rem; font-weight: 700; color: var(--white); }
+    .owner-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .owner-action { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 0.85rem; padding: 1.5rem; }
+    .owner-action h4 { margin-bottom: 0.8rem; }
+    .owner-action p { color: var(--muted); margin-bottom: 1rem; }
+    .owner-action .btn-sm { padding: 0.75rem 1rem; }
+    .owner-welcome { color: var(--muted); font-size: 0.95rem; }
+    @media (max-width: 900px) {
+      .dashboard-summary, .owner-actions { grid-template-columns: 1fr; }
+      .dashboard-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <button class="btn-nav" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="section dashboard-hero">
+  <p class="lbl">Owner Access</p>
+  <h1 class="ttl">Dashboard</h1>
+  <p class="owner-welcome">Welcome back, <span id="owner-name">Owner</span>. Manage orders, inventory, and store settings from one place.</p>
+</div>
+
+<div class="section">
+  <div class="dashboard-header">
+    <div>
+      <p class="lbl">Quick Overview</p>
+      <h2 class="ttl" style="font-size: clamp(1.8rem, 3vw, 2.6rem);">Store performance at a glance</h2>
+    </div>
+  </div>
+
+  <div class="dashboard-summary">
+    <div class="dash-card">
+      <h3>Today's orders</h3>
+      <div class="dash-value">12</div>
+    </div>
+    <div class="dash-card">
+      <h3>Pending deliveries</h3>
+      <div class="dash-value">4</div>
+    </div>
+    <div class="dash-card">
+      <h3>Products in stock</h3>
+      <div class="dash-value">128</div>
+    </div>
+  </div>
+
+  <div class="owner-actions">
+    <div class="owner-action">
+      <h4>Manage Inventory</h4>
+      <p>Review stock levels, update product availability, and keep your collection fresh.</p>
+      <button class="btn-sm" onclick="window.location.href='shop.html'">View Shop</button>
+    </div>
+    <div class="owner-action">
+      <h4>Review Orders</h4>
+      <p>Track new orders and check delivery status on the store pages.</p>
+      <button class="btn-sm" onclick="window.location.href='checkout.html'">Open Checkout</button>
+    </div>
+    <div class="owner-action">
+      <h4>Update Profile</h4>
+      <p>Keep your owner contact details and business details up to date.</p>
+      <button class="btn-sm" onclick="window.location.href='contact.html'">Contact Page</button>
+    </div>
+    <div class="owner-action">
+      <h4>Store Analytics</h4>
+      <p>Monitor site performance and see which categories are trending.</p>
+      <button class="btn-sm" onclick="window.location.href='index.html'">View Store</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script>
+function checkOwnerAuth() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+  const ownerEmail = localStorage.getItem('authEmail') || 'admin@example.com';
+  document.getElementById('owner-name').textContent = ownerEmail;
+}
+
+function logout() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('userRole');
+  localStorage.removeItem('authEmail');
+  window.location.href = 'login.html';
+}
+
+document.addEventListener('DOMContentLoaded', checkOwnerAuth);
+</script>
+</body>
+</html>
