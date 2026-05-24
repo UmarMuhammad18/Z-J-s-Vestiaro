@@ -1,6 +1,6 @@
 // controllers/paymentController.js - Payment Processing Controller
-import supabase from '../config-database.js';
-import { confirmPaymentIntent, createRefund, verifyWebhookSignature } from '../utils-stripe.js';
+import supabase from './config-database.js';
+import { confirmPaymentIntent, createRefund, verifyWebhookSignature } from './utils-stripe.js';
 
 export const confirmPayment = async (req, res) => {
   try {

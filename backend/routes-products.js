@@ -1,6 +1,6 @@
 // routes/products.js - Product Routes
 import express from 'express';
-import { verifyToken, optionalAuth } from '../middleware-auth.js';
+import { verifyToken, optionalAuth } from './middleware-auth.js';
 import {
   getCategories,
   getProducts,
@@ -8,7 +8,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct
-} from '../controllers-productController.js';
+} from './controllers-productController.js';
 
 const router = express.Router();
 

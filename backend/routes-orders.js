@@ -1,13 +1,13 @@
 // routes/orders.js - Order Management Routes
 import express from 'express';
-import { verifyToken } from '../middleware-auth.js';
+import { verifyToken } from './middleware-auth.js';
 import {
   createOrder,
   getOrders,
   getOrderById,
   updateOrderStatus,
   cancelOrder
-} from '../controllers-orderController.js';
+} from './controllers-orderController.js';
 
 const router = express.Router();
 

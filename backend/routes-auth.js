@@ -1,6 +1,6 @@
 // routes/auth.js - Authentication Routes
 import express from 'express';
-import { register, login, refreshAccessToken, logout } from '../controllers-authController.js';
+import { register, login, refreshAccessToken, logout } from './controllers-authController.js';
 
 const router = express.Router();
 

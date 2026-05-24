@@ -1,12 +1,12 @@
 // routes/inventory.js - Inventory Management Routes
 import express from 'express';
-import { verifyToken } from '../middleware-auth.js';
+import { verifyToken } from './middleware-auth.js';
 import {
   getInventory,
   checkStock,
   updateInventory,
   getLowStockProducts
-} from '../controllers-inventoryController.js';
+} from './controllers-inventoryController.js';
 
 const router = express.Router();
 

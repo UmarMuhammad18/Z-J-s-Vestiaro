@@ -1,6 +1,6 @@
 // controllers/productController.js - Product Management Controller
-import supabase from '../config-database.js';
-import { validateProductData } from '../utils-validators.js';
+import supabase from './config-database.js';
+import { validateProductData } from './utils-validators.js';
 
 export const getCategories = async (req, res) => {
   try {

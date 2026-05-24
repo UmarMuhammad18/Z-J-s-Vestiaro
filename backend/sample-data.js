@@ -1,7 +1,18 @@
 // sample-data.js - Sample Data for Testing
 // Run this with: node sample-data.js (after setting up database)
 
-import supabase from './config-database.js';
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import ws from 'ws';
+
+dotenv.config();
+
+// Use service role key to bypass Row Level Security for seeding
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  { realtime: { transport: ws } }
+);
 
 const sampleCategories = [
   { name: 'Dresses', description: 'Elegant evening and casual dresses' },

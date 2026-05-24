@@ -1,5 +1,5 @@
 // controllers/cartController.js - Shopping Cart Controller
-import supabase from '../config-database.js';
+import supabase from './config-database.js';
 
 export const getCart = async (req, res) => {
   try {

@@ -1,8 +1,9 @@
 // controllers/orderController.js - Order Management Controller
-import supabase from '../config-database.js';
+import supabase from './config-database.js';
+import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
-import { validateOrderData } from '../utils-validators.js';
-import { createPaymentIntent } from '../utils-stripe.js';
+import { validateOrderData } from './utils-validators.js';
+import { createPaymentIntent } from './utils-stripe.js';
 
 export const createOrder = async (req, res) => {
   try {

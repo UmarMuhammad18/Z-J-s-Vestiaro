@@ -1,11 +1,11 @@
 // routes/payments.js - Payment Routes
 import express from 'express';
-import { verifyToken } from '../middleware-auth.js';
+import { verifyToken } from './middleware-auth.js';
 import {
   confirmPayment,
   refundPayment,
   handleStripeWebhook
-} from '../controllers-paymentController.js';
+} from './controllers-paymentController.js';
 
 const router = express.Router();
 

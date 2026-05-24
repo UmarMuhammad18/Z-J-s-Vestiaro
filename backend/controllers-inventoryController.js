@@ -1,5 +1,5 @@
 // controllers/inventoryController.js - Inventory Management Controller
-import supabase from '../config-database.js';
+import supabase from './config-database.js';
 
 export const getInventory = async (req, res) => {
   try {

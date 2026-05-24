@@ -1,13 +1,13 @@
 // routes/cart.js - Shopping Cart Routes
 import express from 'express';
-import { verifyToken } from '../middleware-auth.js';
+import { verifyToken } from './middleware-auth.js';
 import {
   getCart,
   addToCart,
   removeFromCart,
   updateCartItem,
   clearCart
-} from '../controllers-cartController.js';
+} from './controllers-cartController.js';
 
 const router = express.Router();
 

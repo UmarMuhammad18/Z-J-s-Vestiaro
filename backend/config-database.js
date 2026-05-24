@@ -1,6 +1,7 @@
 // config/database.js - Supabase Connection Configuration
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import ws from 'ws';
 
 dotenv.config();
 
@@ -11,6 +12,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase credentials in environment variables');
 }
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    transport: ws,
+  },
+});
 
 export default supabase;
