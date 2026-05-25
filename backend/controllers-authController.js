@@ -96,11 +96,13 @@ export const login = async (req, res) => {
       .single();
 
     if (error || !user) {
+      console.warn(`Failed login attempt for ${email}: user not found or query error`, error || 'no user');
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
     if (!passwordMatch) {
+      console.warn(`Failed login attempt for ${email}: password mismatch`);
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 

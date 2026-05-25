@@ -73,6 +73,10 @@ const serviceSupabase = serviceRoleKey && supabaseUrl
   ? createClient(supabaseUrl, serviceRoleKey, { realtime: { transport: ws } })
   : null;
 
+if (!serviceSupabase) {
+  console.warn('SUPABASE_SERVICE_ROLE_KEY is not set. Admin creation may fail if your Supabase table uses Row Level Security.');
+}
+
 const getDbClient = () => serviceSupabase || supabase;
 
 async function ensureAdminUser() {
