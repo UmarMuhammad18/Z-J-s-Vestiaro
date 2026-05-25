@@ -1,6 +1,35 @@
 // controllers/productController.js - Product Management Controller
 import supabase from './config-database.js';
+import validator from 'validator';
 import { validateProductData } from './utils-validators.js';
+
+const CATEGORY_RELATION = '*, category:categories(name)';
+
+const resolveCategoryId = async (category_id, category_name) => {
+  if (category_id) return category_id;
+  if (!category_name) return null;
+
+  const { data: existingCategory, error: queryError } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('name', category_name)
+    .single();
+
+  if (queryError && queryError.code !== 'PGRST116') {
+    throw queryError;
+  }
+
+  if (existingCategory) return existingCategory.id;
+
+  const { data: newCategory, error: insertError } = await supabase
+    .from('categories')
+    .insert({ name: category_name, created_at: new Date() })
+    .select()
+    .single();
+
+  if (insertError) throw insertError;
+  return newCategory.id;
+};
 
 export const getCategories = async (req, res) => {
   try {
@@ -23,10 +52,14 @@ export const getProducts = async (req, res) => {
     const { category, search, page = 1, limit = 20, sort = 'created_at' } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
-    let query = supabase.from('products').select('*', { count: 'exact' });
+    let query = supabase.from('products').select(CATEGORY_RELATION, { count: 'exact' });
 
     if (category) {
-      query = query.eq('category_id', category);
+      if (validator.isUUID(category)) {
+        query = query.eq('category_id', category);
+      } else {
+        query = query.eq('category.name', category);
+      }
     }
 
     if (search) {
@@ -58,7 +91,7 @@ export const getProductById = async (req, res) => {
 
     const { data: product, error } = await supabase
       .from('products')
-      .select('*, category:categories(*), variants(*), reviews(*)')
+      .select('*, category:categories(name), variants(*), reviews(*)')
       .eq('id', id)
       .single();
 
@@ -75,9 +108,10 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, price, category_id, sku, images, stock } = req.body;
+    const { name, description, price, category_id, category, sku, images, stock } = req.body;
+    const resolvedCategoryId = await resolveCategoryId(category_id, category);
 
-    const errors = validateProductData({ name, price, category_id });
+    const errors = validateProductData({ name, price, category_id: resolvedCategoryId });
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ success: false, error: errors });
     }
@@ -88,13 +122,13 @@ export const createProduct = async (req, res) => {
         name,
         description,
         price: parseFloat(price),
-        category_id,
+        category_id: resolvedCategoryId,
         sku,
         images: images || [],
         stock: stock || 0,
         created_at: new Date()
       })
-      .select()
+      .select(CATEGORY_RELATION)
       .single();
 
     if (error) throw error;
@@ -109,13 +143,18 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const updates = { ...req.body };
+
+    if (updates.category || updates.category_id) {
+      updates.category_id = await resolveCategoryId(updates.category_id, updates.category);
+      delete updates.category;
+    }
 
     const { data: product, error } = await supabase
       .from('products')
       .update({ ...updates, updated_at: new Date() })
       .eq('id', id)
-      .select()
+      .select(CATEGORY_RELATION)
       .single();
 
     if (error || !product) {

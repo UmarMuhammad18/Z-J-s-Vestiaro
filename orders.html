@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="orders.html" class="nav-link active">Orders</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; display:flex; align-items:center;">
+      🛍️<span class="cart-badge"></span>
+    </a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<div class="section">
+  <p class="lbl">Your Orders</p>
+  <h1 class="ttl">Order History</h1>
+  <p style="color:var(--muted); max-width:720px; margin-bottom:2rem;">Review your previous purchases, view totals, and check the status of orders placed through WhatsApp or bank transfer.</p>
+
+  <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+    <select id="order-status-filter" onchange="renderOrderHistory()" style="min-width:180px;">
+      <option value="all">All Statuses</option>
+      <option value="Pending Verification">Pending Verification</option>
+      <option value="Verified">Verified</option>
+      <option value="Confirmed">Confirmed</option>
+      <option value="Shipped">Shipped</option>
+    </select>
+    <select id="order-payment-filter" onchange="renderOrderHistory()" style="min-width:180px;">
+      <option value="all">All Payment Types</option>
+      <option value="whatsapp">WhatsApp</option>
+      <option value="bank">Bank Transfer</option>
+      <option value="card">Card</option>
+    </select>
+    <input id="order-search" type="search" placeholder="Search orders..." oninput="renderOrderHistory()" style="flex:1; min-width:200px;">
+  </div>
+
+  <div id="orders-list"></div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function getOrderHistory() {
+  return JSON.parse(localStorage.getItem('zj_orders')) || [];
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function orderStatusBadge(status) {
+  const palette = {
+    'Pending Verification': ['#fde68a', '#111'],
+    'Verified': ['#bbf7d0', '#111'],
+    'Confirmed': ['#a5b4fc', '#111'],
+    'Shipped': ['#fbcfe8', '#111'],
+  };
+  const [bg, color] = palette[status] || ['#cbd5e1', '#111'];
+  return `<span style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.4rem 0.75rem; border-radius:999px; background:${bg}; color:${color}; font-size:0.82rem; font-weight:700;">${status}</span>`;
+}
+
+function renderOrderHistory() {
+  const orders = getOrderHistory();
+  const statusFilter = document.getElementById('order-status-filter')?.value || 'all';
+  const paymentFilter = document.getElementById('order-payment-filter')?.value || 'all';
+  const searchTerm = document.getElementById('order-search')?.value.toLowerCase().trim() || '';
+  const container = document.getElementById('orders-list');
+
+  if (!orders.length) {
+    container.innerHTML = `
+      <div style="padding:3rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; text-align:center; color:var(--muted);">
+        <div style="font-size:3rem; margin-bottom:1rem;">🧾</div>
+        <p>No orders yet. Complete a purchase to see your order history here.</p>
+        <a href="shop.html" class="btn-gold" style="margin-top:1.5rem; display:inline-block;">Start Shopping</a>
+      </div>`;
+    return;
+  }
+
+  const filteredOrders = orders.filter(order => {
+    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    const matchesPayment = paymentFilter === 'all' || order.paymentMethod === paymentFilter;
+    const matchesSearch = searchTerm === '' || [
+      order.id,
+      order.customer,
+      order.paymentMethod,
+      order.status,
+      ...(order.items || []).map(item => item.name)
+    ].some(value => String(value || '').toLowerCase().includes(searchTerm));
+    return matchesStatus && matchesPayment && matchesSearch;
+  });
+
+  if (!filteredOrders.length) {
+    container.innerHTML = `
+      <div style="padding:3rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; text-align:center; color:var(--muted);">
+        <div style="font-size:3rem; margin-bottom:1rem;">🔎</div>
+        <p>No orders match the selected filters.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filteredOrders.map(order => `
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:1.8rem; margin-bottom:1.2rem;">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.8rem; margin-bottom:1rem;">
+        <div>
+          <div style="font-size:0.82rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:0.3rem;">Order ID</div>
+          <div style="font-weight:700;">${order.id}</div>
+        </div>
+        <div>
+          <div style="font-size:0.82rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:0.3rem;">Placed</div>
+          <div>${formatDate(order.date)}</div>
+        </div>
+        <div>
+          <div style="font-size:0.82rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:0.3rem;">Total</div>
+          <div>${order.total}</div>
+        </div>
+      </div>
+      <div style="display:grid; gap:0.75rem; margin-bottom:1rem;">
+        ${order.items.map(item => `
+          <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:0.95rem;">
+            <span>${item.emoji || '🛍️'} ${item.name} × ${item.quantity}</span>
+            <span>$${(item.price * item.quantity).toFixed(2)}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div style="display:grid; gap:0.6rem; color:var(--muted); font-size:0.86rem;">
+        <div>Payment: <strong>${order.paymentMethod}</strong></div>
+        <div>Status: ${orderStatusBadge(order.status || 'Pending')}</div>
+        <div>Customer: ${order.customer}</div>
+        ${order.receiptName ? `<div>Receipt: ${order.receiptName}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setActiveNav();
+  updateCartBadge();
+  renderOrderHistory();
+});
+</script>
+</body>
+</html>

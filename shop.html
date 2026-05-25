@@ -21,7 +21,9 @@
     <li><a href="contact.html" class="nav-link">Contact</a></li>
   </ul>
   <div style="display:flex; gap:0.8rem; align-items:center">
-    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; display:flex; align-items:center;">
+      🛍️<span class="cart-badge"></span>
+    </a>
     <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
   </div>
 </nav>
@@ -35,6 +37,31 @@
     <button class="flt-btn" onclick="filterShop('footwear', this)">Footwear</button>
     <button class="flt-btn" onclick="filterShop('gadgets', this)">Gadgets</button>
     <button class="flt-btn" onclick="filterShop('clothing', this)">Clothing</button>
+  </div>
+  <div class="shop-controls">
+    <input id="shop-search" type="search" placeholder="Search products..." oninput="handleSearch(this.value)">
+    <select id="shop-availability" onchange="filterAvailability(this.value)">
+      <option value="all">All Availability</option>
+      <option value="in-stock">Available Only</option>
+      <option value="out-stock">Out of Stock</option>
+    </select>
+    <select id="shop-price-range" onchange="filterPriceRange(this.value)">
+      <option value="all">All Prices</option>
+      <option value="under-50">Under $50</option>
+      <option value="50-100">$50 - $100</option>
+      <option value="100-150">$100 - $150</option>
+      <option value="150-plus">$150+</option>
+    </select>
+    <select id="shop-sort" onchange="sortShop(this.value)">
+      <option value="default">Recommended</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="name-asc">Name: A–Z</option>
+      <option value="name-desc">Name: Z–A</option>
+      <option value="newest">Newest</option>
+      <option value="oldest">Oldest</option>
+      <option value="popularity">Popularity</option>
+    </select>
   </div>
 </div>
 
@@ -54,8 +81,16 @@
       <p class="pm-gender" id="pm-gender">Unisex</p>
       <p class="pm-price" id="pm-price">$0.00</p>
       <p class="pm-stock" id="pm-stock">In Stock</p>
+      <div id="pm-variants" style="display:none; margin-top:1rem; gap:0.6rem; font-size:0.95rem;">
+        <div style="font-weight:700; color:var(--white); margin-bottom:0.45rem;">Options</div>
+        <div id="pm-variant-list" style="display:grid; gap:0.45rem;"></div>
+      </div>
       <hr class="pm-divider">
       <p class="pm-desc" id="pm-description">Product description goes here.</p>
+      <div id="pm-related" style="display:none; margin-top:1.5rem;">
+        <div style="font-weight:700; color:var(--white); margin-bottom:0.75rem;">Related Products</div>
+        <div id="pm-related-list" style="display:grid; gap:0.75rem;"></div>
+      </div>
       <button class="btn-gold" style="width:100%; margin-top:auto" onclick="addToCart()">Add to Cart</button>
       <p class="pm-wa-note">🟢 Order via WhatsApp for instant confirmation</p>
     </div>

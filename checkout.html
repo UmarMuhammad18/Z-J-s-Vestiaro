@@ -21,7 +21,9 @@
     <li><a href="contact.html" class="nav-link">Contact</a></li>
   </ul>
   <div style="display:flex; gap:0.8rem; align-items:center">
-    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; display:flex; align-items:center;">
+      🛍️<span class="cart-badge"></span>
+    </a>
     <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
   </div>
 </nav>
@@ -77,17 +79,44 @@
           <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 1rem;">Payment Method</h3>
           
           <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 1rem;">
-            <input type="radio" name="payment" value="whatsapp" checked style="cursor: pointer;">
+            <input type="radio" name="payment" value="whatsapp" checked style="cursor: pointer;" onchange="updatePaymentDetails()">
             <span style="font-size: 0.95rem;">WhatsApp Order (Pay on WhatsApp)</span>
           </label>
           
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-            <input type="radio" name="payment" value="card" style="cursor: pointer;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 1rem;">
+            <input type="radio" name="payment" value="card" style="cursor: pointer;" onchange="updatePaymentDetails()">
             <span style="font-size: 0.95rem;">Credit/Debit Card</span>
           </label>
+
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-bottom: 1rem;">
+            <input type="radio" name="payment" value="bank" style="cursor: pointer;" onchange="updatePaymentDetails()">
+            <span style="font-size: 0.95rem;">Direct Bank Transfer</span>
+          </label>
+
+          <div id="bank-transfer-details" style="display:none; margin-top:1rem; padding:1rem; border-radius:12px; border:1px solid rgba(201,168,76,0.18); background:rgba(201,168,76,0.04);">
+            <div style="margin-bottom:1rem; color:var(--white);">
+              <div style="font-weight:700; margin-bottom:0.45rem;">Bank Transfer Instructions</div>
+              <div style="font-size:0.95rem; color:var(--muted); margin-bottom:0.5rem;">Send payment to the bank account below, then upload the receipt screenshot.</div>
+              <div style="font-size:0.95rem; margin-bottom:0.15rem;">Bank: Eko Bank PLC</div>
+              <div style="font-size:0.95rem; margin-bottom:0.15rem;">Account name: Z&amp;J's Vestiario</div>
+              <div style="font-size:0.95rem; margin-bottom:0.15rem;">Account number: 1234567890</div>
+              <div style="font-size:0.95rem; margin-bottom:0.15rem;">Branch: Kano Central</div>
+              <div style="font-size:0.95rem;">Sort code: 00-01-23</div>
+            </div>
+            <div class="fgrp" style="margin-bottom:0;">
+              <label>Upload bank transfer receipt</label>
+              <input id="receipt-upload" type="file" accept="image/*" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); width: 100%;">
+              <p style="color:var(--muted); font-size:0.85rem; margin-top:0.5rem;">Upload a screenshot of your bank receipt so the owner can verify payment before shipping.</p>
+            </div>
+          </div>
+        </div>
+        <div style="margin:1.5rem 0 0; padding:1rem; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); color:var(--muted);">
+          <p style="font-weight:700; color:var(--white); margin-bottom:0.65rem;">Need help with your order?</p>
+          <p style="margin:0; font-size:0.95rem; line-height:1.7;">Contact us on WhatsApp at <strong>+234 816 823 1546</strong> or email <strong>hello@zandjsvestiario.com</strong>. Bank transfer receipts are reviewed manually so your order can ship faster.</p>
         </div>
         
         <button type="submit" class="btn-gold" style="width: 100%; margin-top: 2rem;">Place Order</button>
+        <a href="orders.html" class="btn-outline" style="width: 100%; display: inline-flex; justify-content: center; margin-top: 1rem;">View Order History</a>
       </form>
     </div>
     
@@ -118,6 +147,18 @@
         <span>Total: </span>
         <span id="total">$0.00</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="orderConfirmation" style="display:none; position:fixed; inset:0; z-index:900; background:rgba(0,0,0,0.92); color:var(--white); display:flex; align-items:center; justify-content:center; padding:2rem;">
+  <div style="background: #111; border:1px solid rgba(255,255,255,0.1); border-radius:14px; max-width:520px; width:100%; padding:2.5rem; text-align:center; position:relative; display:flex; flex-direction:column; gap:1.2rem;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:2rem;">Order Confirmed</h2>
+    <p class="confirmation-subtitle" style="color:var(--muted); font-size:1rem; line-height:1.75;">Thanks, <span class="confirmation-name"></span>! Your order has been recorded.</p>
+    <p style="color:var(--muted); font-size:0.95rem;">Order total: <strong class="confirmation-total"></strong></p>
+    <div style="display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;">
+      <a href="orders.html" class="btn-gold" style="min-width:160px;">View Order History</a>
+      <button class="btn-outline" style="min-width:160px;" onclick="closeConfirmation()">Continue Shopping</button>
     </div>
   </div>
 </div>
@@ -155,7 +196,7 @@
 <script src="main.js"></script>
 <script>
 function loadOrderSummary() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = JSON.parse(localStorage.getItem('zj_cart')) || [];
   const container = document.getElementById('order-items');
   
   container.innerHTML = cart.map(item => `
@@ -174,26 +215,111 @@ function loadOrderSummary() {
   document.getElementById('total').textContent = `$${total.toFixed(2)}`;
 }
 
-function processOrder(e) {
+function getOrderHistory() {
+  return JSON.parse(localStorage.getItem('zj_orders')) || [];
+}
+
+function saveOrderHistory(orders) {
+  localStorage.setItem('zj_orders', JSON.stringify(orders));
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Unable to read receipt file.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function recordOrder(cart, customerName, paymentMethod, total, receiptImage, receiptName) {
+  const orders = getOrderHistory();
+  orders.unshift({
+    id: `ORD-${Date.now()}`,
+    date: new Date().toISOString(),
+    customer: customerName,
+    paymentMethod,
+    items: cart,
+    total,
+    receiptImage: receiptImage || null,
+    receiptName: receiptName || null,
+    status: paymentMethod === 'bank' ? 'Pending Verification' : 'Confirmed',
+  });
+  saveOrderHistory(orders);
+}
+
+async function processOrder(e) {
   e.preventDefault();
   const form = e.target;
   const paymentMethod = form.querySelector('input[name="payment"]:checked').value;
   const name = form.querySelector('input[type="text"]').value;
-  
+  const cart = JSON.parse(localStorage.getItem('zj_cart')) || [];
+  const total = document.getElementById('total').textContent;
+
+  if (cart.length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+
+  if (paymentMethod === 'bank') {
+    const receiptInput = document.getElementById('receipt-upload');
+    if (!receiptInput || !receiptInput.files || !receiptInput.files.length) {
+      alert('Please upload your bank transfer receipt screenshot before placing the order.');
+      return;
+    }
+    const receiptFile = receiptInput.files[0];
+    const receiptData = await readFileAsDataUrl(receiptFile);
+    recordOrder(cart, name, paymentMethod, total, receiptData, receiptFile.name);
+    localStorage.removeItem('zj_cart');
+    showConfirmation(name, total, 'Your bank transfer order is pending verification. The owner will review your receipt before shipping.');
+    return;
+  }
+
   if (paymentMethod === 'whatsapp') {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const message = `Hi! I'd like to place an order.\n\nCustomer: ${name}\n\nItems:\n${cart.map(item => `${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}\n\nTotal: ${document.getElementById('total').textContent}`;
+    recordOrder(cart, name, paymentMethod, total);
+    const message = `Hi! I'd like to place an order.\n\nCustomer: ${name}\n\nItems:\n${cart.map(item => `${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}\n\nTotal: ${total}`;
     const whatsappLink = `https://wa.me/2348168231546?text=${encodeURIComponent(message)}`;
     window.open(whatsappLink, '_blank');
-    
-    localStorage.removeItem('cart');
-    setTimeout(() => window.location.href = 'index.html', 1000);
-  } else {
-    alert('Card payment integration coming soon! Please use WhatsApp Order to place your order.');
+    localStorage.removeItem('zj_cart');
+    showConfirmation(name, total, 'Your order has been sent via WhatsApp and will be processed soon.');
+    return;
+  }
+
+  if (paymentMethod === 'card') {
+    alert('Card payment integration coming soon! Please use WhatsApp Order or Bank Transfer to place your order.');
+    return;
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadOrderSummary);
+function updatePaymentDetails() {
+  const selected = document.querySelector('input[name="payment"]:checked').value;
+  const bankDetails = document.getElementById('bank-transfer-details');
+  if (bankDetails) {
+    bankDetails.style.display = selected === 'bank' ? 'block' : 'none';
+  }
+}
+
+function showConfirmation(name, total, message) {
+  const confirmation = document.getElementById('orderConfirmation');
+  if (!confirmation) return;
+  confirmation.querySelector('.confirmation-name').textContent = name;
+  confirmation.querySelector('.confirmation-total').textContent = total;
+  const subtitle = confirmation.querySelector('.confirmation-subtitle');
+  if (subtitle) subtitle.textContent = message || 'Thank you! Your order has been placed.';
+  confirmation.style.display = 'flex';
+}
+
+function closeConfirmation() {
+  const confirmation = document.getElementById('orderConfirmation');
+  if (!confirmation) return;
+  confirmation.style.display = 'none';
+  window.location.href = 'index.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadOrderSummary();
+  updatePaymentDetails();
+});
 </script>
 </body>
 </html>

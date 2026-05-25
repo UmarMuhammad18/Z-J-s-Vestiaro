@@ -62,7 +62,9 @@
     <li><a href="contact.html" class="nav-link">Contact</a></li>
   </ul>
   <div style="display:flex; gap:0.8rem; align-items:center">
-    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; display:flex; align-items:center;">
+      🛍️<span class="cart-badge"></span>
+    </a>
     <button class="btn-nav" onclick="window.location.href='login.html'" style="color: var(--gold);">Owner Login</button>
   </div>
 </nav>
@@ -136,16 +138,30 @@
 
 <script src="main.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('authToken') || sessionStorage.getItem('authToken')) {
+    window.location.href = 'owner.html';
+  }
+});
+
 function handleLogin(e) {
   e.preventDefault();
   const email = e.target.querySelector('input[type="email"]').value;
   const password = e.target.querySelector('input[type="password"]').value;
+  const remember = e.target.querySelector('#remember').checked;
   
   // Demo authentication
   if (email === 'admin@example.com' && password === 'password123') {
-    localStorage.setItem('authToken', 'demo-token-' + Date.now());
-    localStorage.setItem('userRole', 'admin');
-    localStorage.setItem('authEmail', email);
+    const token = 'demo-token-' + Date.now();
+    if (remember) {
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('authEmail', email);
+      localStorage.setItem('userRole', 'admin');
+    } else {
+      sessionStorage.setItem('authToken', token);
+      sessionStorage.setItem('authEmail', email);
+      sessionStorage.setItem('userRole', 'admin');
+    }
     alert('Login successful!');
     window.location.href = 'owner.html';
   } else {

@@ -21,7 +21,7 @@
     <li><a href="contact.html" class="nav-link">Contact</a></li>
   </ul>
   <div style="display:flex; gap:0.8rem; align-items:center">
-    <a href="cart.html" style="font-size:1.2rem; cursor:pointer">🛍️</a>
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; display:flex; align-items:center;">🛍️<span class="cart-badge"></span></a>
     <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
   </div>
 </nav>
@@ -159,14 +159,10 @@
 <script>
 // Load featured products on homepage
 document.addEventListener('DOMContentLoaded', () => {
-  const sampleProducts = [
-    { id: 1, name: 'Premium Sneakers', category: 'footwear', price: 89.99, emoji: '👟' },
-    { id: 2, name: 'Leather Boots', category: 'footwear', price: 129.99, emoji: '🥾' },
-    { id: 4, name: 'Wireless Earbuds', category: 'gadgets', price: 79.99, emoji: '🎧' },
-  ];
-  
+  const products = getProducts();
+  const featured = products.slice(0, 3);
   const container = document.getElementById('featured-products');
-  container.innerHTML = sampleProducts.map(p => `
+  container.innerHTML = featured.map(p => `
     <div class="prod-card" onclick="window.location.href='shop.html'">
       <div class="prod-img-wrap">
         <span class="prod-emoji">${p.emoji}</span>

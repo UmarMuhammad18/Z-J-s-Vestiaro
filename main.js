@@ -1,76 +1,250 @@
-// main.js - Shared JavaScript
-const API_URL = 'http://localhost:5000/api';
+// main.js - Shared JavaScript for Z&J's Vestiario
 
-// Sample products for demo (replace with API calls)
-const sampleProducts = [
-  { id: 1, name: 'Premium Sneakers', category: 'footwear', price: 89.99, emoji: '👟', stock: true },
-  { id: 2, name: 'Leather Boots', category: 'footwear', price: 129.99, emoji: '🥾', stock: true },
-  { id: 3, name: 'Running Shoes', category: 'footwear', price: 99.99, emoji: '👟', stock: true },
-  { id: 4, name: 'Wireless Earbuds', category: 'gadgets', price: 79.99, emoji: '🎧', stock: true },
-  { id: 5, name: 'Smart Watch', category: 'gadgets', price: 199.99, emoji: '⌚', stock: true },
-  { id: 6, name: 'Phone Stand', category: 'gadgets', price: 29.99, emoji: '📱', stock: true },
-  { id: 7, name: 'Elegant Dress', category: 'clothing', price: 79.99, emoji: '👗', stock: true },
-  { id: 8, name: 'Casual T-Shirt', category: 'clothing', price: 29.99, emoji: '👕', stock: true },
-  { id: 9, name: 'Wool Sweater', category: 'clothing', price: 59.99, emoji: '🧶', stock: true },
+// ─── Default product catalogue (used only to seed on first visit) ──────────
+const DEFAULT_PRODUCTS = [
+  { id: 1, name: 'Premium Sneakers',  category: 'footwear', price: 89.99,  emoji: '👟', stock: true, desc: 'Comfortable and stylish sneakers perfect for everyday wear.', sizes: ['7','8','9','10','11'], colors: ['Black','White','Navy'], popularity: 82, createdAt: 1716800000000 },
+  { id: 2, name: 'Leather Boots',     category: 'footwear', price: 129.99, emoji: '🥾', stock: true, desc: 'Classic leather boots crafted with premium quality hide.', sizes: ['6','7','8','9','10'], colors: ['Brown','Tan'], popularity: 68, createdAt: 1716713600000 },
+  { id: 3, name: 'Running Shoes',     category: 'footwear', price: 99.99,  emoji: '👟', stock: true, desc: 'Performance running shoes engineered for athletes.', sizes: ['7','8','9','10','11'], colors: ['Grey','Lime'], popularity: 74, createdAt: 1716627200000 },
+  { id: 4, name: 'Wireless Earbuds',  category: 'gadgets',  price: 79.99,  emoji: '🎧', stock: true, desc: 'Premium noise-cancelling wireless earbuds.', colors: ['Black','White'], popularity: 90, createdAt: 1716540800000 },
+  { id: 5, name: 'Smart Watch',       category: 'gadgets',  price: 199.99, emoji: '⌚', stock: true, desc: 'Feature-rich smartwatch with full health tracking.', colors: ['Black','Silver'], popularity: 83, createdAt: 1716454400000 },
+  { id: 6, name: 'Phone Stand',       category: 'gadgets',  price: 29.99,  emoji: '📱', stock: true, desc: 'Adjustable phone stand compatible with all devices.', colors: ['Black','Rose'], popularity: 55, createdAt: 1716368000000 },
+  { id: 7, name: 'Elegant Dress',     category: 'clothing', price: 79.99,  emoji: '👗', stock: true, desc: 'Beautiful evening dress for special occasions.', sizes: ['S','M','L'], colors: ['Red','Navy'], popularity: 70, createdAt: 1716281600000 },
+  { id: 8, name: 'Casual T-Shirt',    category: 'clothing', price: 29.99,  emoji: '👕', stock: true, desc: 'Premium cotton casual t-shirt.', sizes: ['S','M','L','XL'], colors: ['White','Black'], popularity: 62, createdAt: 1716195200000 },
+  { id: 9, name: 'Wool Sweater',      category: 'clothing', price: 59.99,  emoji: '🧶', stock: true, desc: 'Warm and cosy wool sweater.', sizes: ['M','L'], colors: ['Green','Beige'], popularity: 59, createdAt: 1716108800000 },
 ];
 
-// Set active nav link
-function setActiveNav() {
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-link').forEach(link => {
-    if (link.href.includes(currentPage)) {
-      link.classList.add('active');
-    } else {
-      link.classList.remove('active');
+// ─── Product Store (localStorage-backed) ──────────────────────────────────
+function getProducts() {
+  const stored = localStorage.getItem('zj_products');
+  if (stored) return JSON.parse(stored);
+  // First visit: seed with defaults
+  saveProducts(DEFAULT_PRODUCTS);
+  return DEFAULT_PRODUCTS;
+}
+
+function saveProducts(products) {
+  localStorage.setItem('zj_products', JSON.stringify(products));
+}
+
+function getNextProductId() {
+  const products = getProducts();
+  return products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+}
+
+const API_BASE_URL = (() => {
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+  return `${window.location.protocol}//${window.location.host}/api`;
+})();
+
+const CART_KEY = 'zj_cart';
+
+function getAuthToken() {
+  return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+}
+
+function getAuthHeaders() {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function apiRequest(path, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...getAuthHeaders(),
+    ...options.headers,
+  };
+
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `API error ${response.status}`);
+  }
+  return response.json();
+}
+
+async function fetchProductsFromApi() {
+  try {
+    const response = await apiRequest('/products');
+    if (response.success && response.data?.products) {
+      return response.data.products.map((product) => ({
+        ...product,
+        category: product.category?.name || product.category_id || product.category || 'Unknown',
+        stock: Boolean(product.stock),
+        popularity: product.popularity || 0,
+        createdAt: product.createdAt || Date.now(),
+      }));
     }
+  } catch (error) {
+    console.warn('Product API fetch failed:', error);
+  }
+
+  return getProducts();
+}
+
+async function createProductApi(product) {
+  try {
+    const response = await apiRequest('/products', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...product,
+        category: product.category,
+      }),
+    });
+    if (response.success) {
+      return {
+        ...response.data,
+        category: response.data.category?.name || product.category,
+        stock: Boolean(response.data.stock),
+      };
+    }
+    throw new Error(response.error || 'Create failed');
+  } catch (error) {
+    console.warn('Product API create failed:', error);
+    const products = getProducts();
+    const localProduct = {
+      ...product,
+      id: getNextProductId(),
+      popularity: product.popularity || 0,
+      createdAt: product.createdAt || Date.now(),
+    };
+    products.push(localProduct);
+    saveProducts(products);
+    return localProduct;
+  }
+}
+
+async function updateProductApi(id, updates) {
+  try {
+    const response = await apiRequest(`/products/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ ...updates, category: updates.category }),
+    });
+    if (response.success) {
+      return {
+        ...response.data,
+        category: response.data.category?.name || updates.category,
+        stock: Boolean(response.data.stock),
+      };
+    }
+    throw new Error(response.error || 'Update failed');
+  } catch (error) {
+    console.warn('Product API update failed:', error);
+    const products = getProducts();
+    const index = products.findIndex((p) => p.id === Number(id));
+    if (index !== -1) {
+      products[index] = { ...products[index], ...updates };
+      saveProducts(products);
+      return products[index];
+    }
+    throw error;
+  }
+}
+
+async function deleteProductApi(id) {
+  try {
+    const response = await apiRequest(`/products/${id}`, {
+      method: 'DELETE',
+    });
+    if (response.success) return true;
+    throw new Error(response.error || 'Delete failed');
+  } catch (error) {
+    console.warn('Product API delete failed:', error);
+    const products = getProducts().filter((p) => p.id !== Number(id));
+    saveProducts(products);
+    return true;
+  }
+}
+
+// ─── Cart helpers ──────────────────────────────────────────────────────────
+function getCart() {
+  return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+}
+
+function saveCart(cart) {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  updateCartBadge();
+}
+
+function updateCartBadge() {
+  const cart = getCart();
+  const total = cart.reduce((sum, i) => sum + i.quantity, 0);
+  document.querySelectorAll('.cart-badge').forEach(el => {
+    el.textContent = total || '';
+    el.style.display = total ? 'flex' : 'none';
   });
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', setActiveNav);
-
-// Add to cart function
 function addToCart() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const productId = document.getElementById('pm-name').dataset.productId;
-  const product = sampleProducts.find(p => p.id == productId);
-  
+  const cart = getCart();
+  const productId = Number(document.getElementById('pm-name').dataset.productId);
+  const availableProducts = (typeof shopProducts !== 'undefined' && shopProducts.length)
+    ? shopProducts
+    : getProducts();
+  const product = availableProducts.find(p => Number(p.id) === productId);
+  if (!product) return;
+
   const cartItem = cart.find(item => item.id === product.id);
   if (cartItem) {
     cartItem.quantity += 1;
   } else {
     cart.push({ ...product, quantity: 1 });
   }
-  
-  localStorage.setItem('cart', JSON.stringify(cart));
+
+  saveCart(cart);
   showToast('Added to cart!');
   closeModal();
 }
 
-// Show toast notification
-function showToast(message) {
+// ─── Auth helpers ──────────────────────────────────────────────────────────
+function isOwnerLoggedIn() {
+  return !!(localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
+}
+
+function logout() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('userRole');
+  localStorage.removeItem('authEmail');
+  sessionStorage.removeItem('authToken');
+  sessionStorage.removeItem('authEmail');
+  window.location.href = 'login.html';
+}
+
+// ─── UI helpers ───────────────────────────────────────────────────────────
+function showToast(message, type) {
   const toast = document.createElement('div');
-  toast.className = 'toast visible';
+  toast.style.cssText = `
+    position:fixed; bottom:1.8rem; right:1.8rem; z-index:9999;
+    background:${type === 'error' ? '#b91c1c' : 'var(--gold)'};
+    color:${type === 'error' ? '#fff' : 'var(--black)'};
+    padding:0.82rem 1.3rem;
+    font-family:'Josefin Sans',sans-serif;
+    font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase;
+    border-radius:6px; box-shadow:0 4px 20px rgba(0,0,0,0.4);
+    animation: slideIn 0.3s ease;
+  `;
   toast.textContent = message;
-  toast.style.position = 'fixed';
-  toast.style.bottom = '1.8rem';
-  toast.style.right = '1.8rem';
-  toast.style.zIndex = '9999';
-  toast.style.background = 'var(--gold)';
-  toast.style.color = 'var(--black)';
-  toast.style.padding = '0.82rem 1.3rem';
-  toast.style.fontFamily = '\'Josefin Sans\', sans-serif';
-  toast.style.fontSize = '0.6rem';
-  toast.style.letterSpacing = '0.18em';
-  toast.style.textTransform = 'uppercase';
-  toast.style.borderRadius = '4px';
   document.body.appendChild(toast);
-  
   setTimeout(() => toast.remove(), 3000);
 }
 
-// Close modal
 function closeModal() {
   const modal = document.getElementById('productModal');
   if (modal) modal.classList.remove('open');
 }
+
+// ─── Active nav link ───────────────────────────────────────────────────────
+function setActiveNav() {
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.toggle('active', link.href.includes(currentPage));
+  });
+}
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  setActiveNav();
+  updateCartBadge();
+});

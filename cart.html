@@ -21,7 +21,9 @@
     <li><a href="contact.html" class="nav-link">Contact</a></li>
   </ul>
   <div style="display:flex; gap:0.8rem; align-items:center">
-    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; color: var(--gold);">🛍️</a>
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; color: var(--gold); display:flex; align-items:center;">
+      🛍️<span class="cart-badge"></span>
+    </a>
     <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
   </div>
 </nav>
@@ -59,7 +61,8 @@
       </div>
       
       <button class="btn-gold" style="width: 100%; margin-bottom: 0.8rem;" onclick="checkout()">Proceed to Checkout</button>
-      <a href="shop.html" class="btn-outline" style="width: 100%; text-align: center; display: block;">Continue Shopping</a>
+      <a href="shop.html" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-bottom: 0.8rem;">Continue Shopping</a>
+      <a href="orders.html" class="btn-outline" style="width: 100%; text-align: center; display: block;">Order History</a>
     </div>
   </div>
 </div>
@@ -97,7 +100,7 @@
 <script src="main.js"></script>
 <script>
 function renderCart() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = JSON.parse(localStorage.getItem('zj_cart')) || [];
   const container = document.getElementById('cart-items');
   
   if (cart.length === 0) {
@@ -126,20 +129,20 @@ function renderCart() {
 }
 
 function updateQuantity(idx, quantity) {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = JSON.parse(localStorage.getItem('zj_cart')) || [];
   if (quantity <= 0) {
     cart.splice(idx, 1);
   } else {
     cart[idx].quantity = quantity;
   }
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('zj_cart', JSON.stringify(cart));
   renderCart();
 }
 
 function removeFromCart(idx) {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = JSON.parse(localStorage.getItem('zj_cart')) || [];
   cart.splice(idx, 1);
-  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('zj_cart', JSON.stringify(cart));
   renderCart();
 }
 
@@ -154,7 +157,7 @@ function updateCartTotals(cart) {
 }
 
 function checkout() {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cart = JSON.parse(localStorage.getItem('zj_cart')) || [];
   if (cart.length === 0) {
     alert('Your cart is empty!');
     return;
