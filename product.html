@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details | Z&J's Vestiario</title>
+  <link rel="icon" type="image/png" href="Z&J's.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Josefin+Sans:wght@100;300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="nav-logo" onclick="window.location.href='index.html'">Z<span class="amp">&</span>J's <em style="font-style:italic;font-size:0.76em;opacity:0.55;margin-left:0.12em">Vestiario</em></div>
+  <ul class="nav-links">
+    <li><a href="index.html" class="nav-link">Home</a></li>
+    <li><a href="shop.html" class="nav-link">Shop</a></li>
+    <li><a href="about.html" class="nav-link">About</a></li>
+    <li><a href="contact.html" class="nav-link">Contact</a></li>
+  </ul>
+  <div style="display:flex; gap:0.8rem; align-items:center">
+    <a href="cart.html" style="font-size:1.2rem; cursor:pointer; display:flex; align-items:center;">🛍️<span class="cart-badge"></span></a>
+    <button class="btn-nav" onclick="window.location.href='login.html'">Owner Login</button>
+  </div>
+</nav>
+
+<div class="section" style="padding-top:4rem;">
+  <div style="display:grid; grid-template-columns:1fr minmax(320px,420px); gap:2.5rem; align-items:start;">
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:18px; overflow:hidden;">
+      <div id="product-image" style="min-height:420px; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#141414,#1c1c1c); font-size:7rem; color:var(--white);"></div>
+    </div>
+    <div style="display:grid; gap:1.2rem;">
+      <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+        <div>
+          <p class="lbl" id="product-category">Category</p>
+          <h1 class="ttl" style="margin-bottom:0.5rem;" id="product-name">Product Name</h1>
+        </div>
+        <div style="text-align:right; min-width:130px;">
+          <div class="lbl">Price</div>
+          <div style="font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--gold);" id="product-price">$0.00</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:0.85rem; flex-wrap:wrap; align-items:center;">
+        <span id="product-stock" style="font-family:'Josefin Sans',sans-serif; font-size:0.85rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold);">In Stock</span>
+        <span id="product-availability" style="color:var(--muted); font-size:0.95rem;"></span>
+      </div>
+      <p id="product-description" style="color:var(--muted); line-height:1.8; max-width:780px;"></p>
+      <div id="product-options" style="display:grid; gap:0.75rem;"></div>
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+        <button class="btn-gold" id="add-product-button" onclick="addProductToCart(currentProductId)">Add to Cart</button>
+        <button class="btn-outline" onclick="window.location.href='cart.html'">View Cart</button>
+      </div>
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.4rem;">
+        <p class="lbl" style="margin-bottom:0.8rem;">Shipping & Support</p>
+        <ul style="list-style:none; display:grid; gap:0.65rem; color:var(--muted); font-size:0.95rem; padding-left:0;">
+          <li>• Free delivery on orders above $100.</li>
+          <li>• Bank transfer receipt upload for secure checkout.</li>
+          <li>• Customer support via WhatsApp and email.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:3rem; display:grid; gap:1.4rem;">
+    <h2 class="ttl" style="font-size:clamp(1.8rem,3vw,2.4rem);">More from this category</h2>
+    <div id="related-products" style="display:grid; gap:1rem;"></div>
+  </div>
+</div>
+
+<footer class="site-footer" style="margin-top:0;">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Z<span class="amp">&</span>J's</div>
+      <p class="footer-tagline">If it exists, we've got it</p>
+      <p class="footer-blurb">Your ultimate destination for fashion, footwear, gadgets, and more.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <a href="shop.html?cat=footwear" class="footer-link">Footwear</a>
+      <a href="shop.html?cat=gadgets" class="footer-link">Gadgets</a>
+      <a href="shop.html?cat=clothing" class="footer-link">Clothing</a>
+      <a href="shop.html" class="footer-link">All Products</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="about.html" class="footer-link">About Us</a>
+      <a href="contact.html" class="footer-link">Contact</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <span class="footer-link">hello@zandjsvestiario.com</span>
+      <span class="footer-link">+234 816 823 1546</span>
+      <span class="footer-link">Kano, Nigeria</span>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
+</footer>
+
+<script src="main.js"></script>
+<script>
+let currentProductId = null;
+
+function renderProduct(product) {
+  if (!product) {
+    document.getElementById('product-name').textContent = 'Product not found';
+    document.getElementById('product-description').textContent = 'The product you requested is unavailable or has been removed.';
+    document.getElementById('add-product-button').disabled = true;
+    return;
+  }
+
+  currentProductId = product.id;
+  document.getElementById('product-image').innerHTML = product.image ? `<img src="${product.image}" alt="${product.name}" style="width:100%; height:100%; object-fit:cover;" />` : (product.emoji || '🛍️');
+  document.getElementById('product-category').textContent = (product.category || 'Unknown').toUpperCase();
+  document.getElementById('product-name').textContent = product.name;
+  document.getElementById('product-price').textContent = `$${Number(product.price).toFixed(2)}`;
+  document.getElementById('product-stock').textContent = product.stock ? 'In Stock' : 'Out of Stock';
+  document.getElementById('product-stock').style.color = product.stock ? '#4ece7a' : '#e05555';
+  document.getElementById('product-availability').textContent = product.stock ? 'Ready to ship' : 'Currently unavailable';
+  document.getElementById('product-description').textContent = product.desc || product.description || 'No description available for this item.';
+
+  const options = [];
+  if (product.sizes?.length) options.push(`<div><strong>Sizes:</strong> ${product.sizes.join(', ')}</div>`);
+  if (product.colors?.length) options.push(`<div><strong>Colors:</strong> ${product.colors.join(', ')}</div>`);
+  document.getElementById('product-options').innerHTML = options.join('');
+  document.getElementById('add-product-button').disabled = !product.stock;
+
+  const related = getProducts().filter(p => p.category === product.category && p.id !== product.id).slice(0, 3);
+  const relatedContainer = document.getElementById('related-products');
+  relatedContainer.innerHTML = related.length
+    ? related.map(p => `
+      <div class="prod-card" style="cursor:pointer;" onclick="window.location.href='product.html?id=${p.id}'">
+        <div class="prod-img-wrap"><span class="prod-emoji">${p.emoji || '🛍️'}</span></div>
+        <div class="prod-info">
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-meta">${p.category}</div>
+          <div class="prod-price">$${Number(p.price).toFixed(2)}</div>
+        </div>
+      </div>
+    `).join('')
+    : '<div style="color:var(--muted);">No similar products available.</div>';
+}
+
+function getProductIdFromUrl() {
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setActiveNav();
+  updateCartBadge();
+  initializeCartPreview();
+  const id = getProductIdFromUrl();
+  const product = getProducts().find(p => String(p.id) === String(id));
+  renderProduct(product);
+});
+</script>
+</body>
+</html>

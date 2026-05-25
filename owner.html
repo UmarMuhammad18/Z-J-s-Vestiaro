@@ -18,6 +18,33 @@
     .dash-hero .lbl { margin-bottom: 0.6rem; }
     .dash-hero h1  { margin-bottom: 0.5rem; }
     .dash-welcome  { color: var(--muted); font-size: 0.95rem; }
+    .owner-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1.4rem;
+    }
+    .owner-actions button {
+      min-width: 140px;
+      border-radius: 999px;
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    .owner-section {
+      display: none;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    .owner-section h2 { margin-bottom: 1rem; }
+
+    .owner-section.active { display: block; }
 
     .dash-stats {
       display: grid;
@@ -245,10 +272,16 @@
   <p class="lbl">Owner Access</p>
   <h1 class="ttl">Dashboard</h1>
   <p class="dash-welcome">Welcome back, <strong id="owner-email">Owner</strong>. Manage your product catalogue below.</p>
+  <div class="owner-actions">
+    <button class="btn-outline" onclick="showOwnerSection('dashboard')">Dashboard</button>
+    <button class="btn-outline" onclick="showOwnerSection('settings')">Settings</button>
+    <button class="btn-outline" onclick="showOwnerSection('lookbook')">Lookbook</button>
+    <button class="btn-delete" onclick="logout()">Logout</button>
+  </div>
 </div>
 
 <!-- Main Section -->
-<div class="section">
+<div class="section" id="owner-dashboard-main">
 
   <!-- Stats -->
   <div class="dash-stats">
@@ -276,6 +309,15 @@
       <div class="stat-label">Pending Payments</div>
       <div class="stat-value" id="stat-pending">0</div>
     </div>
+    <div class="stat-card">
+      <div class="stat-label">Ready to Ship</div>
+      <div class="stat-value" id="stat-ready">0</div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:0.85rem; margin-bottom:2rem;">
+    <button class="btn-outline" onclick="processPendingPayments()">Verify All Pending</button>
+    <button class="btn-outline" onclick="markAllShipped()">Mark All Shipped</button>
   </div>
 
   <!-- Products Management -->
@@ -336,6 +378,38 @@
     <div class="empty-state" id="orders-empty" style="display:none;">
       <div class="empty-icon">📑</div>
       <p>No orders yet. Completed purchases will appear here.</p>
+    </div>
+  </div>
+</div>
+
+<div id="owner-section-settings" class="owner-section">
+  <h2>Settings</h2>
+  <p style="color:var(--muted); margin-bottom:1rem;">Quick access to owner settings and store preferences.</p>
+  <div style="display:grid; gap:1rem;">
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:1rem;">
+      <p style="font-weight:700; margin-bottom:0.5rem;">Admin Email</p>
+      <p style="color:var(--muted);">hello@zandjsvestiario.com</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:1rem;">
+      <p style="font-weight:700; margin-bottom:0.5rem;">Password Management</p>
+      <div style="display:grid; gap:0.85rem;">
+        <input id="owner-current-password" type="password" placeholder="Current password" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:var(--white); padding:0.85rem 1rem;" />
+        <input id="owner-new-password" type="password" placeholder="New password" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:var(--white); padding:0.85rem 1rem;" />
+        <input id="owner-confirm-password" type="password" placeholder="Confirm new password" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:var(--white); padding:0.85rem 1rem;" />
+        <button class="btn-gold" style="width:fit-content;" onclick="updateOwnerPassword()">Save New Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="owner-section-lookbook" class="owner-section">
+  <h2>Lookbook</h2>
+  <p style="color:var(--muted); margin-bottom:1rem;">Curate featured collections and preview current product highlights.</p>
+  <div style="display:grid; gap:1rem;">
+    <button class="btn-gold" style="width:fit-content;" onclick="alert('Lookbook editor coming soon.')">Open Lookbook Editor</button>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:1rem;">
+      <p style="font-weight:700; margin-bottom:0.5rem;">Featured Assets</p>
+      <p style="color:var(--muted);">Manage your store lookbook, promotional display, and product showcase layouts.</p>
     </div>
   </div>
 </div>
@@ -438,9 +512,49 @@ function renderOrderMetrics() {
   const orders = getOrderHistory();
   const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total?.replace(/[^0-9.]/g, '') || 0), 0);
   const pendingPayments = orders.filter(order => order.status === 'Pending Verification').length;
+  const readyToShip = orders.filter(order => order.status === 'Verified' || order.status === 'Confirmed').length;
   document.getElementById('stat-orders').textContent = orders.length;
   document.getElementById('stat-revenue').textContent = `$${totalRevenue.toFixed(2)}`;
   document.getElementById('stat-pending').textContent = pendingPayments;
+  document.getElementById('stat-ready').textContent = readyToShip;
+}
+
+function processPendingPayments() {
+  const orders = getOrderHistory();
+  let updated = false;
+  orders.forEach(order => {
+    if (order.status === 'Pending Verification') {
+      order.status = 'Verified';
+      updated = true;
+    }
+  });
+  if (updated) {
+    saveOrderHistory(orders);
+    renderOrderTable();
+    renderOrderMetrics();
+    showToast('All pending orders marked as verified.');
+  } else {
+    showToast('No pending orders found.', 'error');
+  }
+}
+
+function markAllShipped() {
+  const orders = getOrderHistory();
+  let updated = false;
+  orders.forEach(order => {
+    if (order.status === 'Verified' || order.status === 'Confirmed') {
+      order.status = 'Shipped';
+      updated = true;
+    }
+  });
+  if (updated) {
+    saveOrderHistory(orders);
+    renderOrderTable();
+    renderOrderMetrics();
+    showToast('Ready orders have been marked shipped.');
+  } else {
+    showToast('No orders ready to ship.', 'error');
+  }
 }
 
 function saveOrderHistory(orders) {
@@ -536,7 +650,62 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('owner-email').textContent = email;
   renderTable();
   renderOrderTable();
+  showOwnerSection('dashboard');
 });
+
+function showOwnerSection(section) {
+  const dashboard = document.getElementById('owner-dashboard-main');
+  const settings = document.getElementById('owner-section-settings');
+  const lookbook = document.getElementById('owner-section-lookbook');
+
+  dashboard.style.display = section === 'dashboard' ? '' : 'none';
+  settings.style.display = section === 'settings' ? 'block' : 'none';
+  lookbook.style.display = section === 'lookbook' ? 'block' : 'none';
+}
+
+async function updateOwnerPassword() {
+  const currentInput = document.getElementById('owner-current-password');
+  const newInput = document.getElementById('owner-new-password');
+  const confirmInput = document.getElementById('owner-confirm-password');
+
+  const currentPassword = currentInput.value.trim();
+  const newPassword = newInput.value.trim();
+  const confirmPassword = confirmInput.value.trim();
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    showToast('Please fill in all password fields.', 'error');
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    showToast('New password must be at least 8 characters.', 'error');
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    showToast('New password and confirmation do not match.', 'error');
+    return;
+  }
+
+  try {
+    const response = await apiRequest('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+
+    if (response.success) {
+      currentInput.value = '';
+      newInput.value = '';
+      confirmInput.value = '';
+      showToast('Password updated successfully.');
+    } else {
+      showToast(response.error || 'Unable to update password.', 'error');
+    }
+  } catch (error) {
+    console.error('Change password error:', error);
+    showToast('Password update failed. Please try again.', 'error');
+  }
+}
 
 // ─── Render Product Table ─────────────────────────────────────────────────
 async function renderTable() {

@@ -96,9 +96,7 @@
     
     <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
       <p style="color: var(--muted); font-size: 0.85rem; text-align: center;">
-        Demo credentials:<br>
-        Email: <code style="color: var(--gold);">admin@example.com</code><br>
-        Password: <code style="color: var(--gold);">password123</code>
+        Use your registered owner email and password to access the dashboard.
       </p>
     </div>
     
@@ -144,28 +142,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
-  const email = e.target.querySelector('input[type="email"]').value;
+  const email = e.target.querySelector('input[type="email"]').value.trim();
   const password = e.target.querySelector('input[type="password"]').value;
   const remember = e.target.querySelector('#remember').checked;
-  
-  // Demo authentication
-  if (email === 'admin@example.com' && password === 'password123') {
-    const token = 'demo-token-' + Date.now();
-    if (remember) {
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('authEmail', email);
-      localStorage.setItem('userRole', 'admin');
-    } else {
-      sessionStorage.setItem('authToken', token);
-      sessionStorage.setItem('authEmail', email);
-      sessionStorage.setItem('userRole', 'admin');
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      const errorMessage = result.error || 'Login failed. Check your credentials.';
+      alert(errorMessage);
+      return;
     }
+
+    setAuthSession({
+      accessToken: result.data.accessToken,
+      refreshToken: result.data.refreshToken,
+      email: result.data.user.email,
+    }, remember);
+
     alert('Login successful!');
     window.location.href = 'owner.html';
-  } else {
-    alert('Invalid credentials. Try admin@example.com / password123');
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('Login failed. Make sure the backend server is running and your credentials are correct.');
   }
 }
 </script>

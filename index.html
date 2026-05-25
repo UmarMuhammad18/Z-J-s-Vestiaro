@@ -125,6 +125,25 @@
   </div>
 </div>
 
+<div class="section" style="padding-top:1rem; padding-bottom:3rem;">
+  <p class="lbl">Why Shop With Us</p>
+  <h2 class="ttl">Trusted by Customers <em>Every Day</em></h2>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:2rem;">
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.8rem;">
+      <p style="font-size:1.1rem; margin-bottom:1rem;">Fast, reliable delivery</p>
+      <p style="color:var(--muted); line-height:1.8;">Order today and get prompt shipping, with clear delivery updates for every purchase.</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.8rem;">
+      <p style="font-size:1.1rem; margin-bottom:1rem;">Secure bank transfer checkout</p>
+      <p style="color:var(--muted); line-height:1.8;">Upload your receipt with every bank transfer order so we can verify your payment quickly.</p>
+    </div>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.8rem;">
+      <p style="font-size:1.1rem; margin-bottom:1rem;">Customer-first support</p>
+      <p style="color:var(--muted); line-height:1.8;">Reach out via WhatsApp or email, and our team will help you with every step of your order.</p>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="site-footer">
   <div class="footer-grid">
@@ -163,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const featured = products.slice(0, 3);
   const container = document.getElementById('featured-products');
   container.innerHTML = featured.map(p => `
-    <div class="prod-card" onclick="window.location.href='shop.html'">
+    <div class="prod-card" onclick="window.location.href='product.html?id=${p.id}'">
       <div class="prod-img-wrap">
         <span class="prod-emoji">${p.emoji}</span>
       </div>

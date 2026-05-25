@@ -45,6 +45,35 @@ function getAuthToken() {
   return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 }
 
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+}
+
+function setAuthSession({ accessToken, refreshToken, email }, remember = false) {
+  if (remember) {
+    localStorage.setItem('authToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('authEmail', email);
+    localStorage.setItem('userRole', 'admin');
+  } else {
+    sessionStorage.setItem('authToken', accessToken);
+    sessionStorage.setItem('refreshToken', refreshToken);
+    sessionStorage.setItem('authEmail', email);
+    sessionStorage.setItem('userRole', 'admin');
+  }
+}
+
+function clearAuthSession() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('authEmail');
+  localStorage.removeItem('userRole');
+  sessionStorage.removeItem('authToken');
+  sessionStorage.removeItem('refreshToken');
+  sessionStorage.removeItem('authEmail');
+  sessionStorage.removeItem('userRole');
+}
+
 function getAuthHeaders() {
   const token = getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -175,6 +204,72 @@ function updateCartBadge() {
     el.textContent = total || '';
     el.style.display = total ? 'flex' : 'none';
   });
+  renderCartPreview();
+}
+
+function getCartPreviewHtml(cart) {
+  if (!cart.length) {
+    return `
+      <div class="cart-preview-empty">
+        <p>Your cart is empty.</p>
+        <button class="btn-outline" onclick="window.location.href='shop.html'">Shop Now</button>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="cart-preview-header">
+      <span>Cart Preview</span>
+      <span>${cart.length} item${cart.length > 1 ? 's' : ''}</span>
+    </div>
+    <div class="cart-preview-items">
+      ${cart.map(item => `
+        <div class="cart-preview-item">
+          <div class="cart-preview-meta">
+            <div class="cart-preview-title">${item.name}</div>
+            <div class="cart-preview-sub">${item.quantity} × $${Number(item.price).toFixed(2)}</div>
+          </div>
+          <div class="cart-preview-total">$${(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="cart-preview-actions">
+      <button class="btn-outline" onclick="window.location.href='cart.html'">View Cart</button>
+      <button class="btn-gold" onclick="window.location.href='checkout.html'">Checkout</button>
+    </div>
+  `;
+}
+
+function renderCartPreview() {
+  let preview = document.getElementById('cartPreview');
+  if (!preview) {
+    const nav = document.querySelector('#main-nav');
+    if (!nav) return;
+    preview = document.createElement('div');
+    preview.id = 'cartPreview';
+    preview.className = 'cart-preview';
+    nav.appendChild(preview);
+  }
+  const cart = getCart();
+  preview.innerHTML = getCartPreviewHtml(cart);
+}
+
+function initializeCartPreview() {
+  const cartLink = document.querySelector('a[href="cart.html"]');
+  const preview = document.getElementById('cartPreview');
+  if (!cartLink || !preview) return;
+
+  cartLink.addEventListener('mouseenter', () => {
+    renderCartPreview();
+    preview.classList.add('open');
+  });
+  cartLink.addEventListener('mouseleave', () => {
+    setTimeout(() => {
+      if (!preview.matches(':hover')) preview.classList.remove('open');
+    }, 150);
+  });
+  preview.addEventListener('mouseleave', () => preview.classList.remove('open'));
+  preview.addEventListener('mouseenter', () => preview.classList.add('open'));
 }
 
 function addToCart() {
@@ -198,17 +293,32 @@ function addToCart() {
   closeModal();
 }
 
+function addProductToCart(productId) {
+  const cart = getCart();
+  const product = getProducts().find(p => Number(p.id) === Number(productId));
+  if (!product) {
+    showToast('Product not found.', 'error');
+    return;
+  }
+
+  const cartItem = cart.find(item => item.id === product.id);
+  if (cartItem) {
+    cartItem.quantity += 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+
+  saveCart(cart);
+  showToast('Added to cart!');
+}
+
 // ─── Auth helpers ──────────────────────────────────────────────────────────
 function isOwnerLoggedIn() {
-  return !!(localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
+  return !!getAuthToken();
 }
 
 function logout() {
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('userRole');
-  localStorage.removeItem('authEmail');
-  sessionStorage.removeItem('authToken');
-  sessionStorage.removeItem('authEmail');
+  clearAuthSession();
   window.location.href = 'login.html';
 }
 
@@ -247,4 +357,31 @@ function setActiveNav() {
 document.addEventListener('DOMContentLoaded', () => {
   setActiveNav();
   updateCartBadge();
+  initializeCartPreview();
+  initializeMobileMenu();
 });
+
+function initializeMobileMenu() {
+  const nav = document.querySelector('#main-nav');
+  const links = nav?.querySelector('.nav-links');
+  if (!nav || !links) return;
+
+  let toggle = nav.querySelector('.nav-toggle');
+  if (!toggle) {
+    toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'nav-toggle';
+    toggle.innerHTML = '☰';
+    nav.insertBefore(toggle, links);
+  }
+
+  toggle.addEventListener('click', () => {
+    links.classList.toggle('open');
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) {
+      links.classList.remove('open');
+    }
+  });
+}

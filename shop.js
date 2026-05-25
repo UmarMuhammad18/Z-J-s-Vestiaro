@@ -110,6 +110,10 @@ async function renderProducts() {
         <div class="prod-meta">${product.category}</div>
         <div class="prod-price">$${Number(product.price).toFixed(2)}</div>
         ${!product.stock ? '<div style="color:#e05555;font-size:0.75rem;letter-spacing:0.1em;margin-top:0.3rem;font-family:\'Josefin Sans\',sans-serif;">OUT OF STOCK</div>' : ''}
+        <div style="display:flex; gap:0.6rem; margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn-outline" onclick="event.stopPropagation(); window.location.href='product.html?id=${product.id}'">View Details</button>
+          ${product.stock ? `<button class="btn-gold" onclick="event.stopPropagation(); addProductToCart(${product.id})">Add to Cart</button>` : ''}
+        </div>
       </div>
     </div>
   `).join('');

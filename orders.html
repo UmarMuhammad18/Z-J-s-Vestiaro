@@ -104,6 +104,17 @@ function orderStatusBadge(status) {
   return `<span style="display:inline-flex; align-items:center; gap:0.35rem; padding:0.4rem 0.75rem; border-radius:999px; background:${bg}; color:${color}; font-size:0.82rem; font-weight:700;">${status}</span>`;
 }
 
+function orderProgressStep(status) {
+  const steps = ['Pending Verification', 'Verified', 'Confirmed', 'Shipped'];
+  return steps.map(step => {
+    const isComplete = steps.indexOf(status) >= steps.indexOf(step);
+    return `<span style="display:inline-flex; align-items:center; gap:0.4rem; color:${isComplete ? '#fff' : 'rgba(255,255,255,0.5)'};">
+      <span style="width:10px; height:10px; border-radius:999px; background:${isComplete ? 'var(--gold)' : 'rgba(255,255,255,0.18)'};"></span>
+      ${step}
+    </span>`;
+  }).join('<span style="margin:0 0.8rem; color:rgba(255,255,255,0.25);">•</span>');
+}
+
 function renderOrderHistory() {
   const orders = getOrderHistory();
   const statusFilter = document.getElementById('order-status-filter')?.value || 'all';
@@ -170,6 +181,9 @@ function renderOrderHistory() {
       <div style="display:grid; gap:0.6rem; color:var(--muted); font-size:0.86rem;">
         <div>Payment: <strong>${order.paymentMethod}</strong></div>
         <div>Status: ${orderStatusBadge(order.status || 'Pending')}</div>
+        <div style="padding:0.85rem 0.95rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px;">
+          ${orderProgressStep(order.status || 'Pending')}
+        </div>
         <div>Customer: ${order.customer}</div>
         ${order.receiptName ? `<div>Receipt: ${order.receiptName}</div>` : ''}
       </div>
