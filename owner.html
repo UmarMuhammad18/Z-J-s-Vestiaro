@@ -210,6 +210,38 @@
       color: var(--muted);
       margin-bottom: 0.45rem;
     }
+    .image-drop-zone {
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1rem;
+      border: 2px dashed rgba(193,154,107,0.4);
+      border-radius: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      background: rgba(255,255,255,0.02);
+    }
+    .image-drop-zone:hover,
+    .image-drop-zone.dragover {
+      border-color: rgba(193,154,107,0.7);
+      background: rgba(255,255,255,0.06);
+    }
+    .image-preview {
+      margin-top: 0.85rem;
+      border-radius: 10px;
+      overflow: hidden;
+      max-height: 200px;
+      background: rgba(255,255,255,0.05);
+    }
+    .image-preview img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
     .fgrp input, .fgrp select, .fgrp textarea {
       width: 100%;
       background: rgba(255,255,255,0.04);
@@ -457,12 +489,15 @@
       </div>
 
       <div class="fgrp">
-        <label for="input-desc">Description *</label>
-        <textarea id="input-desc" placeholder="Brief product description…" required></textarea>
+      <label>Upload Image</label>
+      <div id="image-drop-zone" class="image-drop-zone" onclick="document.getElementById('input-image-file').click()" ondragover="event.preventDefault(); this.classList.add('dragover');" ondragleave="event.preventDefault(); this.classList.remove('dragover');" ondrop="handleImageDrop(event); this.classList.remove('dragover');">
+        <span>Drag & drop an image here, or click to browse</span>
       </div>
+      <input type="file" id="input-image-file" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+      <div id="image-preview" class="image-preview" style="display:none;"></div>
+    </div>
 
-      <div class="fgrp">
-        <label for="input-stock">Stock Status</label>
+    <div class="fgrp">
         <select id="input-stock">
           <option value="true">In Stock</option>
           <option value="false">Out of Stock</option>
@@ -759,6 +794,7 @@ function openAddModal() {
   document.getElementById('form-submit-btn').textContent = 'Add Product';
   document.getElementById('edit-product-id').value = '';
   document.getElementById('product-form').reset();
+  clearImageSelection();
   document.getElementById('productFormModal').classList.add('open');
 }
 
@@ -780,12 +816,63 @@ async function openEditModal(id) {
   document.getElementById('input-image').value = product.image || '';
   document.getElementById('input-desc').value = product.desc || product.description || '';
   document.getElementById('input-stock').value = String(product.stock);
+  clearImageSelection();
+  if (product.image) {
+    setProductImagePreview(product.image);
+  }
 
   document.getElementById('productFormModal').classList.add('open');
 }
 
 function closeFormModal() {
   document.getElementById('productFormModal').classList.remove('open');
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function setProductImagePreview(src) {
+  const preview = document.getElementById('image-preview');
+  if (!src) {
+    preview.style.display = 'none';
+    preview.innerHTML = '';
+    return;
+  }
+  preview.style.display = 'block';
+  preview.innerHTML = `<img src="${src}" alt="Product preview">`;
+}
+
+async function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const dataUrl = await readFileAsDataUrl(file);
+  document.getElementById('input-image').value = dataUrl;
+  setProductImagePreview(dataUrl);
+}
+
+function handleImageDrop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const files = event.dataTransfer.files;
+  if (!files || !files.length) return;
+  const file = files[0];
+  if (!file.type.startsWith('image/')) return;
+  readFileAsDataUrl(file).then(dataUrl => {
+    document.getElementById('input-image').value = dataUrl;
+    setProductImagePreview(dataUrl);
+  });
+}
+
+function clearImageSelection() {
+  document.getElementById('input-image-file').value = '';
+  document.getElementById('input-image').value = '';
+  setProductImagePreview('');
 }
 
 // ─── Form Submit (Add or Edit) ────────────────────────────────────────────

@@ -136,12 +136,6 @@
 
 <script src="main.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('authToken') || sessionStorage.getItem('authToken')) {
-    window.location.href = 'owner.html';
-  }
-});
-
 async function handleLogin(e) {
   e.preventDefault();
   const email = e.target.querySelector('input[type="email"]').value.trim();
