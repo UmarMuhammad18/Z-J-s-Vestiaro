@@ -21,15 +21,25 @@ const PORT = process.env.PORT || 5000;
 
 // Security middleware
 app.use(helmet());
+const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost,http://127.0.0.1,https://z-n-j-s-vestiaro.vercel.app')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (curl, Postman, file://)
-    // and any localhost port
-    if (!origin || origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) {
+    if (!origin) {
       callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+      return;
     }
+
+    if (allowedOrigins.some(orig => origin === orig || origin.startsWith(orig))) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));

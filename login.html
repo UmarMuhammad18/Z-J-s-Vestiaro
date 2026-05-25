@@ -134,6 +134,10 @@
   <div class="footer-bottom">&copy; 2025 Z&J's Vestiario &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; No limits, just possibilities</div>
 </footer>
 
+<script>
+  // Set this to your deployed Render backend API URL.
+  window.BACKEND_API_BASE_URL = 'https://z-j-s-vestiaro.onrender.com/api';
+</script>
 <script src="main.js"></script>
 <script>
 async function handleLogin(e) {
@@ -165,7 +169,27 @@ async function handleLogin(e) {
     alert('Login successful!');
     window.location.href = 'owner.html';
   } catch (error) {
-    console.error('Login error:', error);
+    console.warn('Backend login failed:', error);
+
+    // Fallback for demo mode when the backend is not reachable
+    if (email === 'admin@example.com' && password === 'password123') {
+      const token = 'demo-token-' + Date.now();
+      if (remember) {
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('refreshToken', token);
+        localStorage.setItem('authEmail', email);
+        localStorage.setItem('userRole', 'admin');
+      } else {
+        sessionStorage.setItem('authToken', token);
+        sessionStorage.setItem('refreshToken', token);
+        sessionStorage.setItem('authEmail', email);
+        sessionStorage.setItem('userRole', 'admin');
+      }
+      alert('Login successful (demo fallback).');
+      window.location.href = 'owner.html';
+      return;
+    }
+
     alert('Login failed. Make sure the backend server is running and your credentials are correct.');
   }
 }

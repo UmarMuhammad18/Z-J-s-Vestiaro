@@ -31,7 +31,7 @@ function getNextProductId() {
   return products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
 }
 
-const API_BASE_URL = (() => {
+const API_BASE_URL = window.BACKEND_API_BASE_URL || (() => {
   const host = window.location.hostname;
   if (host === 'localhost' || host === '127.0.0.1') {
     return 'http://localhost:5000/api';

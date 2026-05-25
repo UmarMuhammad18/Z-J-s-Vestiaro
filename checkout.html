@@ -83,7 +83,7 @@
           </label>
           <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
             <input type="radio" name="shipping" value="express" style="cursor: pointer;" onchange="loadOrderSummary()">
-            <span style="font-size: 0.95rem;">Express Shipping — $4.50</span>
+            <span style="font-size: 0.95rem;">Express Shipping — ₦4,500.00</span>
           </label>
           <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
             <input type="radio" name="shipping" value="pickup" style="cursor: pointer;" onchange="loadOrderSummary()">
@@ -146,7 +146,7 @@
       
       <div class="summary-row">
         <span>Subtotal</span>
-        <span id="subtotal">$0.00</span>
+        <span id="subtotal">₦0.00</span>
       </div>
       
       <div class="summary-row">
@@ -156,12 +156,12 @@
       
       <div class="summary-row">
         <span>Tax (5%)</span>
-        <span id="tax">$0.00</span>
+        <span id="tax">₦0.00</span>
       </div>
       
       <div class="summary-total">
         <span>Total: </span>
-        <span id="total">$0.00</span>
+        <span id="total">₦0.00</span>
       </div>
     </div>
   </div>
@@ -224,7 +224,7 @@ function loadOrderSummary() {
   container.innerHTML = cart.map(item => `
     <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
       <span>${item.emoji} ${item.name}</span>
-      <span>$${(item.price * item.quantity).toFixed(2)}</span>
+      <span>₦${(item.price * item.quantity).toFixed(2)}</span>
     </div>
   `).join('');
   
@@ -233,10 +233,10 @@ function loadOrderSummary() {
   const tax = subtotal * 0.05;
   const total = subtotal + tax + shippingCost;
   
-  document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-  document.getElementById('shipping').textContent = shippingCost === 0 ? 'Free' : `$${shippingCost.toFixed(2)}`;
-  document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
-  document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+  document.getElementById('subtotal').textContent = `₦${subtotal.toFixed(2)}`;
+  document.getElementById('shipping').textContent = shippingCost === 0 ? 'Free' : `₦${shippingCost.toFixed(2)}`;
+  document.getElementById('tax').textContent = `₦${tax.toFixed(2)}`;
+  document.getElementById('total').textContent = `₦${total.toFixed(2)}`;
 }
 
 function getOrderHistory() {
@@ -314,7 +314,7 @@ async function processOrder(e) {
 
   if (paymentMethod === 'whatsapp') {
     recordOrder(cart, fullName, paymentMethod, total, null, null, shippingMethod);
-    const message = `Hi! I'd like to place an order.\n\nCustomer: ${fullName}\n\nItems:\n${cart.map(item => `${item.name} x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}\n\nTotal: ${total}`;
+    const message = `Hi! I'd like to place an order.\n\nCustomer: ${fullName}\n\nItems:\n${cart.map(item => `${item.name} x${item.quantity} - ₦${(item.price * item.quantity).toFixed(2)}`).join('\n')}\n\nTotal: ${total}`;
     const whatsappLink = `https://wa.me/2348168231546?text=${encodeURIComponent(message)}`;
     window.open(whatsappLink, '_blank');
     localStorage.removeItem('zj_cart');
