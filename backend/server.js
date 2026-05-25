@@ -4,7 +4,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
+import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 import { errorHandler } from './middleware-errorHandler.js';
+import supabase from './config-database.js';
 
 // Import routes
 import authRoutes from './routes-auth.js';
@@ -57,6 +61,67 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
+// Ensure default admin user exists for deployments that are using the demo login flow.
+const supabaseUrl = process.env.SUPABASE_URL;
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+const adminFirstName = process.env.ADMIN_FIRST_NAME || 'Admin';
+const adminLastName = process.env.ADMIN_LAST_NAME || 'User';
+
+const serviceSupabase = serviceRoleKey && supabaseUrl
+  ? createClient(supabaseUrl, serviceRoleKey, { realtime: { transport: ws } })
+  : null;
+
+const getDbClient = () => serviceSupabase || supabase;
+
+async function ensureAdminUser() {
+  try {
+    const client = getDbClient();
+    if (!client) {
+      console.warn('No Supabase client available to seed admin user.');
+      return;
+    }
+
+    const { data, error } = await client
+      .from('users')
+      .select('id')
+      .eq('email', adminEmail);
+
+    if (error) {
+      console.warn('Error checking for existing admin user:', error.message || error);
+      return;
+    }
+
+    if (data?.length > 0) {
+      console.log(`Admin user already exists: ${adminEmail}`);
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    const { data: newUser, error: createError } = await client
+      .from('users')
+      .insert({
+        email: adminEmail,
+        password_hash: hashedPassword,
+        first_name: adminFirstName,
+        last_name: adminLastName,
+        created_at: new Date()
+      })
+      .select()
+      .single();
+
+    if (createError) {
+      console.error('Failed to create default admin user:', createError);
+      return;
+    }
+
+    console.log(`Default admin seeded: ${adminEmail}`);
+  } catch (error) {
+    console.error('Error ensuring default admin user:', error);
+  }
+}
+
 // Request logging
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
@@ -102,14 +167,16 @@ app.use((req, res) => {
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`
+ensureAdminUser().finally(() => {
+  app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════╗
 ║  Z&J's Vestiaro Backend               ║
 ║  Server running on port ${PORT}           ║
 ║  Environment: ${process.env.NODE_ENV || 'development'}        ║
 ╚════════════════════════════════════════╝
   `);
+  });
 });
 
 export default app;
